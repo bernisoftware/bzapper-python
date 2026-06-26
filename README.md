@@ -187,6 +187,50 @@ client.get_usage()  # whole period
 client.get_usage(from_="2026-06-01T00:00:00Z", to="2026-06-30T23:59:59Z")  # RFC3339
 ```
 
+## Webhooks
+
+**Manage** your webhook subscriptions:
+
+```python
+hook = client.create_webhook(
+    "https://yourapp.com/webhooks/bzapper",
+    event_types=["message.received", "instance.banned"],  # omit = all events
+)
+print(hook["secret"])  # signing secret — returned ONCE, store it now
+client.list_webhooks()
+client.update_webhook(hook["id"], active=False)            # pause
+client.update_webhook(hook["id"], secret="regenerate")     # rotate secret
+client.delete_webhook(hook["id"])
+```
+
+**Receive and process** deliveries — `bzapper.webhooks` verifies the HMAC
+signature, parses the envelope into a typed event, and routes it to your
+handlers:
+
+```python
+from bzapper.webhooks import Webhooks
+
+hooks = Webhooks(secret="whsec_...")  # the secret from create_webhook
+
+@hooks.on("message.received")
+def _(event):
+    print(event.sender.name, event.payload.get("body"))
+
+@hooks.on("instance.banned")
+def _(event):
+    alert(event.instance_id)
+
+# In your HTTP endpoint (framework-agnostic). Pass the RAW body bytes and the
+# X-Bzapper-Signature header. Raises SignatureError if the signature is invalid.
+hooks.handle(raw_body=request.get_data(), signature=request.headers["X-Bzapper-Signature"])
+```
+
+The typed `event` has `id`, `type`, `timestamp`, `instance_id`,
+`client_reference`, `group`, `sender`, `mentions`, `payload` and the original
+`raw` dict. Use `event.id` for idempotency (the API may retry deliveries).
+For lower-level use there's `verify_webhook(secret, body, signature)` and
+`construct_webhook_event(secret, body, signature)`.
+
 ## Error handling
 
 Non-2xx responses raise `BzapperError` with a **stable `code`**, a localized

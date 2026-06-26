@@ -646,6 +646,65 @@ class Client:
         """Revoke a tenant API key by ID."""
         return self._request("DELETE", f"/keys/{key_id}")
 
+    # -- webhooks (management; to RECEIVE+process events use bzapper.webhooks) --
+
+    def list_webhooks(self) -> JSONDict:
+        """List the project's webhooks. ``GET /webhooks``"""
+        return self._request("GET", "/webhooks")
+
+    def create_webhook(
+        self,
+        url: str,
+        *,
+        secret: Optional[str] = None,
+        event_types: Optional[Sequence[str]] = None,
+        number_filter: Optional[str] = None,
+    ) -> JSONDict:
+        """Create a webhook. ``POST /webhooks``
+
+        Args:
+            url: HTTPS endpoint that will receive the deliveries.
+            secret: Omit to let the API generate a strong one (returned ONCE in
+                ``secret``). Use it with :class:`bzapper.webhooks.Webhooks`.
+            event_types: Subscribed events; empty/None = all. Each event can
+                belong to a single webhook (409 on conflict).
+            number_filter: ``instance_id`` to restrict to one number.
+        """
+        return self._request(
+            "POST",
+            "/webhooks",
+            body={"url": url, "secret": secret, "event_types": event_types, "number_filter": number_filter},
+        )
+
+    def update_webhook(
+        self,
+        webhook_id: str,
+        *,
+        url: Optional[str] = None,
+        secret: Optional[str] = None,
+        event_types: Optional[Sequence[str]] = None,
+        number_filter: Optional[str] = None,
+        active: Optional[bool] = None,
+    ) -> JSONDict:
+        """Update/pause a webhook. ``secret="regenerate"`` rotates it. ``PATCH /webhooks/{id}``"""
+        return self._request(
+            "PATCH",
+            f"/webhooks/{webhook_id}",
+            body={"url": url, "secret": secret, "event_types": event_types, "number_filter": number_filter, "active": active},
+        )
+
+    def delete_webhook(self, webhook_id: str) -> None:
+        """Delete a webhook. ``DELETE /webhooks/{id}``"""
+        return self._request("DELETE", f"/webhooks/{webhook_id}")
+
+    def test_webhook(self, webhook_id: str, event_type: Optional[str] = None) -> JSONDict:
+        """Send a test event and return the endpoint's HTTP status. ``POST /webhooks/{id}/test``"""
+        return self._request("POST", f"/webhooks/{webhook_id}/test", body={"event_type": event_type})
+
+    def webhook_deliveries(self, webhook_id: str, *, limit: Optional[int] = None) -> JSONDict:
+        """Recent delivery attempts for a webhook. ``GET /webhooks/{id}/deliveries``"""
+        return self._request("GET", f"/webhooks/{webhook_id}/deliveries", params={"limit": limit})
+
     # -- usage -----------------------------------------------------------------
 
     def get_usage(

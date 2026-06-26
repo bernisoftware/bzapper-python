@@ -8,6 +8,21 @@ Quickstart:
 
 from .client import Client
 from .errors import BzapperError
+from .webhooks import (
+    Webhooks,
+    WebhookEvent,
+    SignatureError,
+    verify as verify_webhook,
+    construct_event as construct_webhook_event,
+)
 
-__all__ = ["Client", "BzapperError"]
-__version__ = "0.2.0"
+__all__ = [
+    "Client",
+    "BzapperError",
+    "Webhooks",
+    "WebhookEvent",
+    "SignatureError",
+    "verify_webhook",
+    "construct_webhook_event",
+]
+__version__ = "0.3.0"
