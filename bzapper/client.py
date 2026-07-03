@@ -14,36 +14,48 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 from .errors import BzapperError
 
-__all__ = ["Client"]
+__all__ = ["Client", "DEFAULT_BASE_URL"]
 
 JSONDict = Dict[str, Any]
+
+#: URL base padrão da API (produção). Sobrescreva só em dev/self-host.
+DEFAULT_BASE_URL = "https://api.bzapper.com.br"
 
 
 class Client:
     """HTTP client for the bZapper WhatsApp gateway API.
 
     Args:
-        base_url: API base URL, e.g. ``http://localhost:8080`` in dev or
-            ``https://api.bzapper.com.br`` in production.
-        api_key: Tenant API key (``bz_live_...``). Sent as a Bearer token.
+        api_key: Tenant API key (``bz_live_...``). Sent as a Bearer token. This is
+            the only required argument.
+        base_url: Optional API base URL. Defaults to production
+            (``https://api.bzapper.com.br``); pass ``http://localhost:8080`` only
+            for dev or self-host.
         locale: Optional BCP-47 locale (e.g. ``"pt-BR"``) sent as
             ``Accept-Language`` so error messages come back translated.
         timeout: Per-request timeout in seconds (default ``30``).
 
     Example:
         >>> from bzapper import Client
-        >>> client = Client("http://localhost:8080", "bz_live_...")
+        >>> client = Client("bz_live_...")  # points at production
         >>> client.send_text("+5511999999999", "Hello from bZapper!")
     """
 
     def __init__(
         self,
-        base_url: str,
-        api_key: str,
+        api_key: Optional[str] = None,
+        base_url: Optional[str] = None,
         locale: Optional[str] = None,
         timeout: float = 30,
     ) -> None:
-        self.base_url = base_url.rstrip("/")
+        # Compatibilidade: a assinatura antiga era ``Client(base_url, api_key)``.
+        # Agora a URL é opcional e a API key vem primeiro. Se o 1º argumento
+        # parecer uma URL (http...), tratamos como (base_url, api_key) legado.
+        if api_key is not None and api_key.startswith(("http://", "https://")):
+            api_key, base_url = base_url, api_key
+        if not api_key:
+            raise ValueError("Client: api_key é obrigatório (ex.: 'bz_live_...').")
+        self.base_url = (base_url or DEFAULT_BASE_URL).rstrip("/")
         self.api_key = api_key
         self.locale = locale
         self.timeout = timeout

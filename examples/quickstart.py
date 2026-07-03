@@ -12,8 +12,8 @@ from bzapper import BzapperError, Client
 
 def main() -> None:
     client = Client(
-        base_url=os.environ.get("BZAPPER_BASE_URL", "http://localhost:8080"),
         api_key=os.environ.get("BZAPPER_API_KEY", "bz_live_..."),
+        base_url=os.environ.get("BZAPPER_BASE_URL") or None,  # opcional: default = produção
         locale="pt-BR",
     )
 

@@ -15,9 +15,12 @@ pip install bzapper
 ```python
 from bzapper import Client
 
-client = Client("http://localhost:8080", "bz_live_...")
+client = Client("bz_live_...")
 client.send_text("+5511999999999", "Hello from bZapper!")
 ```
+
+The base URL defaults to `https://api.bzapper.com.br` and is optional — pass one only
+for dev/self-host: `Client("bz_live_...", "http://localhost:8080")`.
 
 ## Client configuration
 
@@ -25,8 +28,8 @@ client.send_text("+5511999999999", "Hello from bZapper!")
 from bzapper import Client
 
 client = Client(
-    base_url="https://api.bzapper.com.br",  # http://localhost:8080 in dev
     api_key="bz_live_...",                    # tenant API key
+    base_url="http://localhost:8080",          # optional, defaults to prod (dev/self-host only)
     locale="pt-BR",                            # optional, sets Accept-Language
     timeout=30,                                # optional, seconds
 )
