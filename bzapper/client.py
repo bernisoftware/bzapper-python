@@ -130,6 +130,7 @@ class Client:
         client_reference: Optional[str],
         mentions: Optional[Sequence[str]],
         sticky: Optional[bool],
+        scheduled_at: Optional[str],
     ) -> JSONDict:
         """Build the SendBase fields shared by every message endpoint."""
         return {
@@ -140,6 +141,7 @@ class Client:
             "client_reference": client_reference,
             "mentions": list(mentions) if mentions is not None else None,
             "sticky": sticky,
+            "scheduled_at": scheduled_at,
         }
 
     # -- messages --------------------------------------------------------------
@@ -155,6 +157,7 @@ class Client:
         client_reference: Optional[str] = None,
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
+        scheduled_at: Optional[str] = None,
     ) -> JSONDict:
         """Send a text message.
 
@@ -174,6 +177,7 @@ class Client:
             client_reference=client_reference,
             mentions=mentions,
             sticky=sticky,
+            scheduled_at=scheduled_at,
         )
         payload["body"] = body
         return self._request("POST", "/messages/text", body=payload)
@@ -191,6 +195,7 @@ class Client:
         client_reference: Optional[str] = None,
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
+        scheduled_at: Optional[str] = None,
     ) -> JSONDict:
         """Send a verification code (OTP) as two messages.
 
@@ -213,6 +218,7 @@ class Client:
             client_reference=client_reference,
             mentions=mentions,
             sticky=sticky,
+            scheduled_at=scheduled_at,
         )
         payload["code"] = code
         if body is not None:
@@ -232,6 +238,7 @@ class Client:
         client_reference: Optional[str] = None,
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
+        scheduled_at: Optional[str] = None,
     ) -> JSONDict:
         """Send an image. ``media`` is a MediaInput dict (use ``url`` OR ``base64``)."""
         return self._send_media(
@@ -244,6 +251,7 @@ class Client:
             client_reference=client_reference,
             mentions=mentions,
             sticky=sticky,
+            scheduled_at=scheduled_at,
         )
 
     def send_video(
@@ -257,6 +265,7 @@ class Client:
         client_reference: Optional[str] = None,
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
+        scheduled_at: Optional[str] = None,
     ) -> JSONDict:
         """Send a video. ``media`` is a MediaInput dict (use ``url`` OR ``base64``)."""
         return self._send_media(
@@ -269,6 +278,7 @@ class Client:
             client_reference=client_reference,
             mentions=mentions,
             sticky=sticky,
+            scheduled_at=scheduled_at,
         )
 
     def send_document(
@@ -282,6 +292,7 @@ class Client:
         client_reference: Optional[str] = None,
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
+        scheduled_at: Optional[str] = None,
     ) -> JSONDict:
         """Send a document. ``media`` is a MediaInput dict (use ``url`` OR ``base64``)."""
         return self._send_media(
@@ -294,6 +305,7 @@ class Client:
             client_reference=client_reference,
             mentions=mentions,
             sticky=sticky,
+            scheduled_at=scheduled_at,
         )
 
     def send_audio(
@@ -307,6 +319,7 @@ class Client:
         client_reference: Optional[str] = None,
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
+        scheduled_at: Optional[str] = None,
     ) -> JSONDict:
         """Send audio. Set ``media["ptt"] = True`` for a voice note."""
         return self._send_media(
@@ -319,6 +332,7 @@ class Client:
             client_reference=client_reference,
             mentions=mentions,
             sticky=sticky,
+            scheduled_at=scheduled_at,
         )
 
     def send_sticker(
@@ -332,6 +346,7 @@ class Client:
         client_reference: Optional[str] = None,
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
+        scheduled_at: Optional[str] = None,
     ) -> JSONDict:
         """Send a sticker. ``media`` is a MediaInput dict (use ``url`` OR ``base64``)."""
         return self._send_media(
@@ -344,6 +359,7 @@ class Client:
             client_reference=client_reference,
             mentions=mentions,
             sticky=sticky,
+            scheduled_at=scheduled_at,
         )
 
     def _send_media(
@@ -367,6 +383,7 @@ class Client:
             client_reference=client_reference,
             mentions=mentions,
             sticky=sticky,
+            scheduled_at=scheduled_at,
         )
         payload["media"] = dict(media)
         return self._request("POST", path, body=payload)
@@ -385,6 +402,7 @@ class Client:
         client_reference: Optional[str] = None,
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
+        scheduled_at: Optional[str] = None,
     ) -> JSONDict:
         """Send a location (latitude/longitude, optional name/address)."""
         payload = self._send_base(
@@ -395,6 +413,7 @@ class Client:
             client_reference=client_reference,
             mentions=mentions,
             sticky=sticky,
+            scheduled_at=scheduled_at,
         )
         payload["latitude"] = latitude
         payload["longitude"] = longitude
@@ -414,6 +433,7 @@ class Client:
         client_reference: Optional[str] = None,
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
+        scheduled_at: Optional[str] = None,
     ) -> JSONDict:
         """Send a contact card (name and/or raw vCard)."""
         payload = self._send_base(
@@ -424,6 +444,7 @@ class Client:
             client_reference=client_reference,
             mentions=mentions,
             sticky=sticky,
+            scheduled_at=scheduled_at,
         )
         payload["contact_name"] = contact_name
         payload["contact_vcard"] = contact_vcard
@@ -442,6 +463,7 @@ class Client:
         client_reference: Optional[str] = None,
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
+        scheduled_at: Optional[str] = None,
     ) -> JSONDict:
         """Send a poll.
 
@@ -458,6 +480,7 @@ class Client:
             client_reference=client_reference,
             mentions=mentions,
             sticky=sticky,
+            scheduled_at=scheduled_at,
         )
         payload["name"] = name
         payload["options"] = list(options)
@@ -475,6 +498,7 @@ class Client:
         client_reference: Optional[str] = None,
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
+        scheduled_at: Optional[str] = None,
     ) -> JSONDict:
         """React to a message.
 
@@ -490,6 +514,7 @@ class Client:
             client_reference=client_reference,
             mentions=mentions,
             sticky=sticky,
+            scheduled_at=scheduled_at,
         )
         payload["emoji"] = emoji
         return self._request("POST", "/messages/reaction", body=payload)
@@ -507,6 +532,7 @@ class Client:
         client_reference: Optional[str] = None,
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
+        scheduled_at: Optional[str] = None,
     ) -> JSONDict:
         """Send interactive buttons.
 
@@ -527,6 +553,7 @@ class Client:
             client_reference=client_reference,
             mentions=mentions,
             sticky=sticky,
+            scheduled_at=scheduled_at,
         )
         payload["body"] = body
         payload["footer"] = footer
@@ -547,6 +574,7 @@ class Client:
         client_reference: Optional[str] = None,
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
+        scheduled_at: Optional[str] = None,
     ) -> JSONDict:
         """Send an interactive list.
 
@@ -568,6 +596,7 @@ class Client:
             client_reference=client_reference,
             mentions=mentions,
             sticky=sticky,
+            scheduled_at=scheduled_at,
         )
         payload["body"] = body
         payload["footer"] = footer
@@ -576,6 +605,160 @@ class Client:
         return self._request("POST", "/messages/list", body=payload)
 
     # -- instances -------------------------------------------------------------
+
+    # -- scheduled sends -------------------------------------------------------
+
+    def list_scheduled(self) -> JSONDict:
+        """List pending/recent scheduled sends. ``GET /messages/scheduled``"""
+        return self._request("GET", "/messages/scheduled")
+
+    def cancel_scheduled(self, scheduled_id: str) -> None:
+        """Cancel a pending scheduled send. ``DELETE /messages/scheduled/{id}``"""
+        self._request("DELETE", f"/messages/scheduled/{scheduled_id}")
+
+    # -- campaigns (Pro + campaigns add-on) ------------------------------------
+
+    def create_campaign(
+        self,
+        variations: Sequence[JSONDict],
+        *,
+        name: Optional[str] = None,
+        pool_id: Optional[str] = None,
+        pacing_profile: Optional[str] = None,
+        start_at: Optional[str] = None,
+    ) -> JSONDict:
+        """Create a campaign with template variations. ``POST /campaigns``
+
+        Requires the Pro plan and the Campaigns add-on. Each variation body accepts
+        ``{variables}`` and spintax ``{a|b|c}``.
+        """
+        body: JSONDict = {"variations": list(variations)}
+        if name is not None:
+            body["name"] = name
+        if pool_id is not None:
+            body["pool_id"] = pool_id
+        if pacing_profile is not None:
+            body["pacing_profile"] = pacing_profile
+        if start_at is not None:
+            body["start_at"] = start_at
+        return self._request("POST", "/campaigns", body=body)
+
+    def list_campaigns(self) -> JSONDict:
+        """List the project's campaigns. ``GET /campaigns``"""
+        return self._request("GET", "/campaigns")
+
+    def get_campaign(self, campaign_id: str) -> JSONDict:
+        """Get a campaign with stats. ``GET /campaigns/{id}``"""
+        return self._request("GET", f"/campaigns/{campaign_id}")
+
+    def update_campaign(
+        self,
+        campaign_id: str,
+        *,
+        name: Optional[str] = None,
+        pool_id: Optional[str] = None,
+        pacing_profile: Optional[str] = None,
+        start_at: Optional[str] = None,
+        variations: Optional[Sequence[JSONDict]] = None,
+    ) -> JSONDict:
+        """Update a campaign. ``PATCH /campaigns/{id}``
+
+        Only the provided fields are changed. Allowed while the campaign is still
+        editable (draft/scheduled).
+        """
+        body: JSONDict = {}
+        if name is not None:
+            body["name"] = name
+        if pool_id is not None:
+            body["pool_id"] = pool_id
+        if pacing_profile is not None:
+            body["pacing_profile"] = pacing_profile
+        if start_at is not None:
+            body["start_at"] = start_at
+        if variations is not None:
+            body["variations"] = list(variations)
+        return self._request("PATCH", f"/campaigns/{campaign_id}", body=body)
+
+    def estimate_campaign(
+        self,
+        *,
+        recipients: Optional[int] = None,
+        pacing: Optional[str] = None,
+        pool_id: Optional[str] = None,
+    ) -> JSONDict:
+        """Live send estimate for a recipient count + pacing. ``GET /campaigns/estimate``
+
+        No campaign needed. Returns ``{recipients, numbers_available,
+        estimated_seconds, estimated_human}``.
+        """
+        return self._request(
+            "GET",
+            "/campaigns/estimate",
+            params={"recipients": recipients, "pacing": pacing, "pool_id": pool_id},
+        )
+
+    def add_campaign_recipients(
+        self,
+        campaign_id: str,
+        *,
+        recipients: Optional[Sequence[JSONDict]] = None,
+        contacts: Optional[JSONDict] = None,
+        contact_ids: Optional[Sequence[str]] = None,
+        contact_filter: Optional[JSONDict] = None,
+        replace: Optional[bool] = None,
+    ) -> JSONDict:
+        """Add recipients. ``POST /campaigns/{id}/recipients``
+
+        Combine any of: ``recipients`` (list of ``{"phone", "payload"}``),
+        ``contacts`` (mapping phone -> payload), ``contact_ids`` (explicit contact
+        ids) and/or ``contact_filter`` (a dict with any of ``search``, ``tags``,
+        ``tags_all``, ``groups``, ``city``, ``state``, ``country``, ``has_email``).
+        For contact_ids/contact_filter phones are resolved server-side and
+        restricted to ACTIVE contacts. Pass ``replace=True`` to replace the whole
+        recipient list instead of appending (draft/scheduled only).
+        """
+        body: JSONDict = {}
+        if recipients is not None:
+            body["recipients"] = list(recipients)
+        if contacts is not None:
+            body["contacts"] = contacts
+        if contact_ids is not None:
+            body["contact_ids"] = list(contact_ids)
+        if contact_filter is not None:
+            body["contact_filter"] = contact_filter
+        if replace is not None:
+            body["replace"] = replace
+        return self._request("POST", f"/campaigns/{campaign_id}/recipients", body=body)
+
+    def list_campaign_recipients(self, campaign_id: str) -> JSONDict:
+        """List recipients. ``GET /campaigns/{id}/recipients``
+
+        Each item includes per-recipient delivery state: ``contact_name``
+        (resolved from the contact base), ``status`` (pending/claimed/sent/
+        failed/suppressed), ``delivery`` (''/sent/delivered/read from WhatsApp
+        receipts), ``message_id`` and ``last_error``.
+        """
+        return self._request("GET", f"/campaigns/{campaign_id}/recipients")
+
+    def start_campaign(self, campaign_id: str) -> JSONDict:
+        """Start (or schedule) the campaign. ``POST /campaigns/{id}/start``"""
+        return self._request("POST", f"/campaigns/{campaign_id}/start")
+
+    def pause_campaign(self, campaign_id: str) -> JSONDict:
+        """Pause the campaign. ``POST /campaigns/{id}/pause``"""
+        return self._request("POST", f"/campaigns/{campaign_id}/pause")
+
+    def resume_campaign(self, campaign_id: str) -> JSONDict:
+        """Resume the campaign. ``POST /campaigns/{id}/resume``"""
+        return self._request("POST", f"/campaigns/{campaign_id}/resume")
+
+    def cancel_campaign(self, campaign_id: str) -> JSONDict:
+        """Cancel the campaign. ``POST /campaigns/{id}/cancel``"""
+        return self._request("POST", f"/campaigns/{campaign_id}/cancel")
+
+    def dry_run_campaign(self, campaign_id: str) -> JSONDict:
+        """Simulate without sending (numbers, duration, warnings). ``POST /campaigns/{id}/dry-run``"""
+        return self._request("POST", f"/campaigns/{campaign_id}/dry-run")
 
     def list_instances(self) -> JSONDict:
         """List the tenant's instances (numbers)."""

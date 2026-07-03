@@ -1,0 +1,21 @@
+# Publica o pacote `bzapper` no PyPI ao dar push de uma tag vX.Y.Z no repo público
+# bernisoftware/bzapper-python. Requer secret PYPI_TOKEN (token de projeto do PyPI).
+name: publish
+on:
+  push:
+    tags: ['v*']
+jobs:
+  pypi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: pip install build twine
+      - run: python -m build
+      - run: twine check dist/*
+      - run: twine upload dist/*
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
