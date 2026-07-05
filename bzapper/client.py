@@ -772,9 +772,15 @@ class Client:
         """Simulate without sending (numbers, duration, warnings). ``POST /campaigns/{id}/dry-run``"""
         return self._request("POST", f"/campaigns/{campaign_id}/dry-run")
 
-    def list_instances(self) -> JSONDict:
-        """List the tenant's instances (numbers)."""
-        return self._request("GET", "/instances")
+    def list_instances(self, *, project_id: Optional[str] = None) -> JSONDict:
+        """List the tenant's instances (numbers).
+
+        Args:
+            project_id: Optional project scope — a project id, or ``"all"`` for
+                every number in the account. Omit to use the active project
+                (the ``X-Project-Id`` header / the project bound to your key).
+        """
+        return self._request("GET", "/instances", params={"project_id": project_id})
 
     def create_instance(
         self,
@@ -1096,6 +1102,7 @@ class Client:
         *,
         search: Optional[str] = None,
         project_id: Optional[str] = None,
+        instance_id: Optional[str] = None,
         limit: Optional[int] = None,
     ) -> JSONDict:
         """List the account's shared contact base (auto-captured from chats).
@@ -1104,12 +1111,20 @@ class Client:
             search: Optional free-text filter (name/phone).
             project_id: Optional project filter — a project id or ``"current"``
                 (the project the API key belongs to).
+            instance_id: Optional filter by a number (instance) the contact
+                interacted with. The contact↔number link is maintained
+                automatically by the API (inbound/outbound correlation).
             limit: Optional max number of contacts.
         """
         return self._request(
             "GET",
             "/contacts",
-            params={"search": search, "project_id": project_id, "limit": limit},
+            params={
+                "search": search,
+                "project_id": project_id,
+                "instance_id": instance_id,
+                "limit": limit,
+            },
         )
 
     # -- projects (numbers, inbox, keys and stats are isolated per project) ----
