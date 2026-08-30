@@ -386,6 +386,7 @@ class Client:
         client_reference: Optional[str],
         mentions: Optional[Sequence[str]],
         sticky: Optional[bool],
+        scheduled_at: Optional[str],
     ) -> JSONDict:
         payload = self._send_base(
             to,
@@ -824,6 +825,18 @@ class Client:
     def disconnect_instance(self, instance_id: str) -> None:
         """Disconnect an instance (reconnectable)."""
         return self._request("POST", f"/instances/{instance_id}/disconnect")
+
+    def clear_instance_session(self, instance_id: str) -> None:
+        """Wipe the paired device credential, forcing a clean re-pairing.
+
+        Use it when :meth:`connect_instance` will not produce a QR code, or when
+        pairing is stuck in an inconsistent state: a plain logout only drops the
+        reference and leaves the old device behind.
+
+        Destructive and irreversible -- the number goes offline and must be
+        paired again by scanning a QR code. Idempotent and safe to retry.
+        """
+        return self._request("POST", f"/instances/{instance_id}/clear-session")
 
     # -- API keys --------------------------------------------------------------
 

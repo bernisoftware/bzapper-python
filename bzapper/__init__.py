@@ -25,4 +25,4 @@ __all__ = [
     "verify_webhook",
     "construct_webhook_event",
 ]
-__version__ = "0.3.0"
+__version__ = "0.6.1"
