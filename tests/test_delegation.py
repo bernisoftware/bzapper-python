@@ -51,6 +51,9 @@ SENDBASE: Dict[str, Any] = {
     "mentions": ["5511888888888@s.whatsapp.net"],
     "sticky": False,
     "scheduled_at": "2026-09-01T12:00:00Z",
+    "groups": ["clientes-vip"],
+    "tags": ["lead"],
+    "force": True,
 }
 
 

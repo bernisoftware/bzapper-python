@@ -7,7 +7,7 @@ Run:
 
 import os
 
-from bzapper import BzapperError, Client
+from bzapper import BzapperError, Client, RateLimitError
 
 
 def main() -> None:
@@ -97,12 +97,21 @@ def main() -> None:
             # Which numbers are on WhatsApp?
             print("check:", client.contacts_check(instance_id, [to]))
 
+        # Contacts (CRM) — the base is fed by your conversations automatically
+        print("contacts:", client.list_contacts(limit=5, sort="last_activity"))
+
         # Usage
         print("usage:", client.get_usage())
 
+    except RateLimitError as err:
+        # Retries already happened (max_retries=2 by default); wait and try later.
+        print(f"rate limited — retry after {err.retry_after}s (request_id={err.request_id})")
     except BzapperError as err:
         # Always branch on the stable code, never on the translated message.
-        print(f"error code={err.code} status={err.status_code}: {err.message}")
+        print(
+            f"error code={err.code} status={err.status_code}: {err.message} "
+            f"(request_id={err.request_id})"
+        )
 
 
 if __name__ == "__main__":

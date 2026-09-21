@@ -2,7 +2,7 @@
 # bernisoftware/bzapper-python. Requer secret PYPI_TOKEN (token de projeto do PyPI).
 #
 # PUBLICAR EXIGE SUÍTE VERDE. Até 0.6.1 este workflow ia direto de `build` para
-# `twine upload` sem rodar teste nenhum — o CI do monorepo (Bitbucket) roda a
+# `twine upload` sem rodar teste nenhum — o CI do monorepo (GitHub Actions) roda a
 # suíte, mas ele gateia o merge no main, não o push de tag no espelho público,
 # que é o que dispara o PyPI. Foi por essa fresta que 0.4.0, 0.5.0 e 0.6.0
 # foram publicadas com 100% dos envios de mídia quebrados (TypeError em

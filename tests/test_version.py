@@ -34,6 +34,12 @@ class TestVersionAlignment(unittest.TestCase):
             "precisa alterar os dois (ver scripts/release-sdks.sh)",
         )
 
+    def test_padrao_do_release_casa_em_version_py(self) -> None:
+        """O ``release-sdks.sh`` reescreve ``__version__ = "..."``: tem de casar 1 vez."""
+        version_py = PYPROJECT.parent / "bzapper" / "_version.py"
+        matches = re.findall(r'__version__\s*=\s*"([^"]+)"', version_py.read_text())
+        self.assertEqual(matches, [bzapper.__version__])
+
 
 class TestIdentificacaoDoCliente(unittest.TestCase):
     """O header de identificação vai em TODA requisição, com a versão certa.

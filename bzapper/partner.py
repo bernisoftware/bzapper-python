@@ -24,10 +24,9 @@ Zero third-party dependencies: reuses the HTTP/error plumbing of
 
 from __future__ import annotations
 
-import urllib.parse
 from typing import Any, Dict, Mapping, Optional
 
-from .client import Client
+from .client import DEFAULT_MAX_RETRIES, Client
 
 __all__ = ["PartnerClient", "CONNECTION_STATUSES"]
 
@@ -49,7 +48,9 @@ class PartnerClient:
         base_url: Optional API base URL. Defaults to production
             (``https://api.bzapper.com.br``).
         locale: Optional BCP-47 locale sent as ``Accept-Language``.
-        timeout: Per-request timeout in seconds (default ``30``).
+        timeout: Per-attempt timeout in seconds (default ``30``).
+        max_retries: New attempts after the first one on network errors,
+            timeouts, 429, 502, 503 and 504 (default ``2``; ``0`` disables).
 
     Raises:
         BzapperError: On any non-2xx response (branch on ``err.code``).
@@ -69,6 +70,8 @@ class PartnerClient:
         base_url: Optional[str] = None,
         locale: Optional[str] = None,
         timeout: float = 30,
+        *,
+        max_retries: int = DEFAULT_MAX_RETRIES,
     ) -> None:
         if not partner_secret:
             raise ValueError(
@@ -77,7 +80,13 @@ class PartnerClient:
         # Composição, não herança: o parceiro não pode herdar os métodos do
         # tenant (send_*, keys…). Reaproveita só o encanamento HTTP/erros do
         # Client — mesmos headers de identificação, mesmo BzapperError.
-        self._http = Client(partner_secret, base_url=base_url, locale=locale, timeout=timeout)
+        self._http = Client(
+            partner_secret,
+            base_url=base_url,
+            locale=locale,
+            timeout=timeout,
+            max_retries=max_retries,
+        )
         self.base_url = self._http.base_url
         self.locale = locale
         self.timeout = timeout
@@ -89,12 +98,16 @@ class PartnerClient:
         *,
         body: Optional[Mapping[str, Any]] = None,
         params: Optional[Mapping[str, Any]] = None,
+        idempotency_key: Optional[str] = None,
     ) -> Any:
-        return self._http._request(method, path, body=body, params=params)
+        return self._http._request(
+            method, path, body=body, params=params, idempotency_key=idempotency_key
+        )
 
     @staticmethod
     def _id(value: str) -> str:
-        return urllib.parse.quote(value, safe="")
+        # Percent-encoded segment; empty/"."/".." → ValueError before any request.
+        return Client._seg(value, "connection_id")
 
     # -- partner ---------------------------------------------------------------
 
@@ -113,6 +126,8 @@ class PartnerClient:
         external_id: str,
         customer: Mapping[str, Any],
         locale: Optional[str] = None,
+        *,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Open a Connect session for one of your customers. ``POST /partner/connect-sessions``
 
@@ -138,9 +153,10 @@ class PartnerClient:
             "POST",
             "/partner/connect-sessions",
             body={"external_id": external_id, "customer": dict(customer), "locale": locale},
+            idempotency_key=idempotency_key,
         )
 
-    def exchange_code(self, code: str) -> JSONDict:
+    def exchange_code(self, code: str, *, idempotency_key: Optional[str] = None) -> JSONDict:
         """Exchange the completion code for the customer's API key. ``POST /partner/connect/exchange``
 
         The component emits ``bzapper:complete`` with a one-time ``code`` (valid
@@ -150,7 +166,12 @@ class PartnerClient:
             The connection plus ``api_key`` (``bz_live_...``) — shown only once,
             store it now (use :meth:`rotate_connection_key` if lost).
         """
-        return self._request("POST", "/partner/connect/exchange", body={"code": code})
+        return self._request(
+            "POST",
+            "/partner/connect/exchange",
+            body={"code": code},
+            idempotency_key=idempotency_key,
+        )
 
     # -- connections -----------------------------------------------------------
 
@@ -179,7 +200,9 @@ class PartnerClient:
         """Get one connection (status, account, numbers). ``GET /partner/connections/{id}``"""
         return self._request("GET", f"/partner/connections/{self._id(connection_id)}")
 
-    def rotate_connection_key(self, connection_id: str) -> JSONDict:
+    def rotate_connection_key(
+        self, connection_id: str, *, idempotency_key: Optional[str] = None
+    ) -> JSONDict:
         """Issue a new API key for a completed connection. ``POST /partner/connections/{id}/rotate-key``
 
         The previous key stops working. Returns the connection plus the new
@@ -188,13 +211,21 @@ class PartnerClient:
         or was revoked.
         """
         return self._request(
-            "POST", f"/partner/connections/{self._id(connection_id)}/rotate-key"
+            "POST",
+            f"/partner/connections/{self._id(connection_id)}/rotate-key",
+            idempotency_key=idempotency_key,
         )
 
-    def revoke_connection(self, connection_id: str) -> None:
+    def revoke_connection(
+        self, connection_id: str, *, idempotency_key: Optional[str] = None
+    ) -> None:
         """End a connection. ``DELETE /partner/connections/{id}``
 
         Revokes the key (it then answers 401 ``connect_revoked``) and sends a
         ``connect.revoked`` webhook. Does NOT cancel the customer's plan.
         """
-        self._request("DELETE", f"/partner/connections/{self._id(connection_id)}")
+        self._request(
+            "DELETE",
+            f"/partner/connections/{self._id(connection_id)}",
+            idempotency_key=idempotency_key,
+        )

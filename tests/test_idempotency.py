@@ -49,9 +49,15 @@ class IdempotencyTestCase(unittest.TestCase):
                 corpo = json.loads(req.data.decode())
                 self.assertNotIn("idempotency_key", corpo)
 
-    def test_sem_chave_sem_cabecalho(self) -> None:
+    def test_sem_chave_a_sdk_gera_uma(self) -> None:
+        # Padrão Berni r2 (BRIEF §3): toda escrita leva Idempotency-Key. Sem a do
+        # usuário, a SDK gera uma (uuid4) por chamada lógica — é o que torna a nova
+        # tentativa automática segura. (Até 0.6.x, sem chave não ia cabeçalho.)
         self.client.send_text("+5511999999999", "oi")
-        self.assertIsNone(self.transport.requests[-1].get_header("Idempotency-key"))
+        primeira = self.transport.requests[-1].get_header("Idempotency-key")
+        self.assertRegex(primeira or "", r"^[0-9a-f-]{36}$")
+        self.client.send_text("+5511999999999", "oi")
+        self.assertNotEqual(self.transport.requests[-1].get_header("Idempotency-key"), primeira)
 
     def test_preview_group_invite(self) -> None:
         self.transport.payload = {"jid": "1@g.us", "name": "G", "size": 3}

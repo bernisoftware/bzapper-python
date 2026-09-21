@@ -7,8 +7,12 @@ Zero runtime dependencies (pure standard library). Python 3.9+.
 ## Install
 
 ```bash
-pip install bzapper
+pip install bzapper==0.6.2
 ```
+
+**Pin the exact version** (`bzapper==X.Y.Z` in `requirements.txt` / `pyproject.toml`).
+Every release note states whether it changes the public surface (a signature or
+return shape) or is purely additive — upgrade on purpose, not by accident.
 
 ## Hello world
 
@@ -31,23 +35,40 @@ client = Client(
     api_key="bz_live_...",                    # tenant API key
     base_url="http://localhost:8080",          # optional, defaults to prod (dev/self-host only)
     locale="pt-BR",                            # optional, sets Accept-Language
-    timeout=30,                                # optional, seconds
+    timeout=30,                                # optional, seconds per attempt
+    max_retries=2,                             # optional, automatic retries (0 disables)
+    project_id="proj_...",                     # optional, sent as X-Project-Id
 )
 ```
 
-Every request sends `Authorization: Bearer <api_key>`, `Content-Type: application/json` and, when `locale` is set, `Accept-Language: <locale>`.
+## Authentication
+
+Create the API key in the bZapper panel or with
+`client.create_key(...)`. The key is sent as `Authorization: Bearer <api_key>`
+and belongs to a **project** — numbers, inbox, keys and stats are isolated per
+project. An account-level key can pick a project per client with
+`project_id=` (the `X-Project-Id` header).
+
+Every request also sends `Accept: application/json`, `X-Bzapper-Client:
+bzapper-python/<version>` (the same value as `User-Agent`), a per-call
+`X-Request-Id` and — on writes — an `Idempotency-Key`; `Content-Type:
+application/json` only when there is a JSON body, and `Accept-Language` when
+`locale` is set.
 
 ## Messages
 
 Every message method accepts the common **SendBase** options as keyword
 arguments: `instance_id`, `pool_id`, `quoted_message_id`, `quoted_participant`
 (author of the quoted/reacted message — only needed in groups when it isn't in
-bZapper history), `client_reference` and `mentions` (JIDs or plain phones).
+bZapper history), `client_reference`, `mentions` (JIDs or plain phones),
+`sticky`, `scheduled_at` (RFC3339 — schedules the send), `groups`/`tags`
+(contact-group/tag keys to target) and `force`.
 Each returns the queued-message object
 (`message_id`, `status`, optional `client_reference`).
 
-Safe retries: pass `idempotency_key="..."` (sent as the `Idempotency-Key`
-header, up to 255 chars) to any send. Repeating it within 24h returns the SAME
+Safe retries: the SDK already sends an automatic `Idempotency-Key` on every
+write and repeats it on its own retries. Pass `idempotency_key="..."` (up to 255
+chars, sent verbatim) to any write to make YOUR retries safe too. Repeating it within 24h returns the SAME
 response without sending twice (`409 idempotency_in_progress` while the first
 is still running; `422 idempotency_key_reused` if the body changed).
 
@@ -60,6 +81,15 @@ client.send_text("+5511999999999", "Order #42 confirmed", idempotency_key="order
 ```python
 # Text
 client.send_text("+5511999999999", "Hello!")
+
+# Verification code (OTP): context text + the code in its own bubble; 1 send.
+# The code is never stored or shown by bZapper.
+client.send_otp("+5511999999999", "482913", expiry_minutes=10)
+
+# Scheduled send + scheduled list/cancel
+s = client.send_text("+5511999999999", "Reminder", scheduled_at="2026-10-01T12:00:00Z")
+client.list_scheduled(limit=20)
+client.cancel_scheduled(s["scheduled_id"])
 
 # Image (use url OR base64, never both)
 client.send_image("+5511999999999", {"url": "https://picsum.photos/600", "caption": "Hi"})
@@ -133,9 +163,34 @@ res = client.connect_instance(inst["id"], method="qr")    # -> {"status", "qr_co
 res = client.connect_instance(inst["id"], method="code")  # -> {"status", "pair_code"?}
 
 client.disconnect_instance(inst["id"])
+client.logout_instance(inst["id"])         # next connect needs a new QR
+client.clear_instance_session(inst["id"])  # stuck pairing: wipe the device, re-pair
 
 # Update the WhatsApp profile (display name / about / picture)
 client.set_profile(inst["id"], display_name="Support", status_message="We reply fast")
+client.set_privacy(inst["id"], "last", "contacts")
+
+# Network, inbound filters, lifecycle
+client.set_instance_proxy(inst["id"], "http://user:pass@proxy:3128")
+client.set_inbound_filters(inst["id"], ignore_groups=True, ignore_status=True)
+client.archive_instance(inst["id"])      # keeps history; list with list_instances(archived=True)
+client.unarchive_instance(inst["id"])
+client.delete_instance(inst["id"])
+
+# Official WhatsApp Business (Cloud API) — projects created with api_mode="OFFICIAL"
+client.get_official_account()
+client.connect_official_account("waba_id", "phone_number_id", "access_token")
+client.disconnect_official_account()
+```
+
+## Pools (number rotation)
+
+```python
+pool = client.create_pool(name="Sales", strategy="health_weighted", is_default=True)
+client.add_pool_number(pool["id"], inst["id"])
+client.list_pools()
+client.get_pool(pool["id"])
+client.send_text("+5511999999999", "Hi", pool_id=pool["id"])  # rotates across the pool
 ```
 
 ## Groups, presence and conversations
@@ -163,6 +218,23 @@ client.conversation_history(
 client.archive_chat("12036304@g.us", inst_id, on=True)
 client.pin_chat("12036304@g.us", inst_id, on=True)
 client.mark_chat("12036304@g.us", inst_id, on=True)
+client.mute_chat("12036304@g.us", inst_id, on=True)
+
+# Edit / revoke / forward / read receipts
+client.edit_message("message_id", "Fixed text")
+client.revoke_message("message_id", for_everyone=True)
+client.forward_message(inst_id, "+5511888888888", "5511999999999@s.whatsapp.net", "wamid...")
+client.mark_read("wamid...", inst_id, "5511999999999@s.whatsapp.net")
+
+# Labels (experimental), block list and calls
+label = client.create_label(inst_id, "VIP", color="1")
+client.apply_chat_label("5511999999999@s.whatsapp.net", inst_id, label["id"])
+client.list_labels(inst_id)
+client.delete_label(label["id"], inst_id)
+client.block_contact("5511999999999@s.whatsapp.net", inst_id)
+client.get_blocklist(inst_id)
+client.unblock_contact("5511999999999@s.whatsapp.net", inst_id)
+client.reject_call(inst_id, "5511999999999@s.whatsapp.net", "call_id")
 
 # Groups
 client.list_groups(inst_id)
@@ -174,10 +246,88 @@ client.update_group_participants(
 client.group_invite(group["jid"], inst_id)          # -> invite link/code
 client.preview_group_invite(inst_id, "Cabc123InviteCode")  # name/size WITHOUT joining
 client.join_group(inst_id, "Cabc123InviteCode")     # join via invite code
+client.update_group(group["jid"], inst_id, name="New name", announce=True)
+client.group_invite(group["jid"], inst_id, reset=True)  # revoke the old link
+client.list_join_requests(group["jid"], inst_id)
+client.update_join_requests(group["jid"], inst_id, ["+5511777777777"], approve=True)
 client.leave_group(group["jid"], inst_id)
 
 # Contacts — which numbers are on WhatsApp?
 client.contacts_check(inst_id, ["+5511999999999", "+5511888888888"])
+```
+
+## Contacts (CRM)
+
+The contact base is shared across the account and fed automatically by your
+conversations (the contact ↔ number/project link is kept by the API).
+
+```python
+c = client.create_contact("+5511999999999", name="Ana", email="ana@example.com")
+client.update_contact(c["id"], document="123.456.789-00")
+client.list_contacts(tags=["vip"], tags_match="all", has_email=True, sort="name", limit=50)
+client.get_contact(c["id"])
+client.get_contact_history(c["id"], limit=20)
+client.add_contact_note(c["id"], "Asked for a quote")
+
+client.create_tag("vip", name="VIP", color="#f59e0b")
+client.mutate_contact_tags(c["id"], add=["vip"], remove=["lead"])
+client.create_contact_group("clients", name="Clients")
+client.mutate_contact_groups(c["id"], add=["clients"])
+
+client.opt_out_contact(c["id"])            # LGPD opt-out: never receives sends
+client.opt_in_contact(c["id"])
+client.create_suppression("+5511888888888", reason="complaint")
+client.list_suppressions(limit=100)
+client.delete_suppression("+5511888888888")
+client.delete_contact(c["id"])
+```
+
+## Campaigns
+
+```python
+camp = client.create_campaign(
+    [{"body": "Hi {name}! {Offer|Deal} of the week: ..."}],
+    name="Week 38", pool_id=pool["id"], pacing_profile="conservative",
+)
+client.add_campaign_recipients(camp["id"], contact_filter={"tags": ["vip"]})
+client.estimate_campaign(recipients=500, pacing="conservative")
+client.get_campaign_eligibility(pool_id=pool["id"])
+client.dry_run_campaign(camp["id"])
+client.start_campaign(camp["id"])
+client.pause_campaign(camp["id"]); client.resume_campaign(camp["id"])
+client.list_campaign_recipients(camp["id"], limit=100)
+
+header = client.upload_campaign_media("banner.png")  # bytes, path or binary file
+```
+
+## Projects, brand and users
+
+```python
+proj = client.create_project("Store B", api_mode="UNOFFICIAL")  # api_mode is immutable
+client.update_project(proj["id"], "Store B (SP)", color="#0ea5e9")
+client.get_projects_health()
+client.set_project_brand(proj["id"], {"display_name": "Store B", "about": "..."})
+client.upload_project_logo(proj["id"], "logo.png")
+
+client.set_brand({"display_name": "ACME", "about": "We reply fast"})
+client.upload_brand_logo("logo.png")
+client.apply_brand()
+
+client.invite_user("bob@acme.com", role="agent")
+client.update_account("ACME Ltda")
+client.get_me()
+```
+
+## Plan, add-ons and invoices
+
+```python
+client.get_my_entitlements()
+client.upgrade_plan()                       # Pro goes to the cart
+client.change_addon("number", 2)            # +2 numbers in the cart
+client.get_addon_cart()
+client.checkout_addon_cart(save_card=True)  # opens the in-app payment
+client.list_my_invoices()
+client.get_pricing()
 ```
 
 ## Realtime (SSE)
@@ -215,6 +365,7 @@ print(hook["secret"])  # signing secret — returned ONCE, store it now
 client.list_webhooks()
 client.update_webhook(hook["id"], active=False)            # pause
 client.update_webhook(hook["id"], secret="regenerate")     # rotate secret
+client.trigger_webhook_event("message.received")  # like `stripe trigger`
 client.delete_webhook(hook["id"])
 ```
 
@@ -420,27 +571,48 @@ client.list_connected_apps()            # -> {"data": [{"id", "partner_name", "s
 client.revoke_connected_app("conn_id")  # admin; the partner's key stops working immediately
 ```
 
-## Error handling
+## Errors, retries and idempotency
 
-Non-2xx responses raise `BzapperError` with a **stable `code`**, a localized
-`message` and the `status_code`. Always branch on `code` — never parse the
-human-readable `message`.
+Non-2xx responses raise `BzapperError` — or a typed subclass — with a **stable
+`code`**, a localized `message` (never parse it), `status_code` (also `status`),
+`request_id` (quote it to support), `retry_after` (429), `required_scope` (403)
+and the decoded `body`. **Branch on `code`.**
+
+| Class | When |
+|---|---|
+| `AuthenticationError` | 401 (also `connect_revoked`) |
+| `PermissionDeniedError` | 403 — see `required_scope` |
+| `NotFoundError` | 404 |
+| `ConflictError` | 409 |
+| `ValidationError` | 400 / 422 |
+| `RateLimitError` | 429 — see `retry_after` |
+| `ServerError` | 5xx |
+| `NetworkError` | connection failure/timeout (`status_code == 0`, `code == "NETWORK_ERROR"`) |
+| `BzapperError` | anything else (e.g. 402 `connect_suspended`), and `INVALID_RESPONSE` when a 2xx is not JSON |
+
+An empty key or an empty/`.`/`..` path parameter raises `ValueError` before any
+request.
 
 ```python
-from bzapper import BzapperError
+from bzapper import BzapperError, RateLimitError
 
 try:
-    client.send_text("+5511999999999", "Hi")
+    client.send_text("+5511999999999", "Hi", idempotency_key="order-42")
+except RateLimitError as err:
+    print("slow down for", err.retry_after, "s")
 except BzapperError as err:
     if err.code == "instance_not_connected":
-        # reconnect flow...
-        ...
-    elif err.code == "rate_limited":
-        # back off...
-        ...
+        ...  # reconnect flow
     else:
-        print(err.code, err.status_code, err.message)
+        print(err.code, err.status_code, err.message, err.request_id)
 ```
+
+**Automatic retries.** Network errors/timeouts, `429`, `502`, `503` and `504` are
+retried up to `max_retries` times (default 2), honoring `Retry-After` (capped at
+60 s) or exponential backoff (`0.5 × 2^n` s, max 8 s, + jitter). A `500` or any
+`4xx` is returned at once. Every attempt of one call carries the **same**
+`X-Request-Id` and `Idempotency-Key`, so a retried write never runs twice (the API
+replays the first response with `Idempotent-Replayed: true`, for 24 h).
 
 ## Example
 

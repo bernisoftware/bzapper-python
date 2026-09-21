@@ -2,13 +2,23 @@
 
 Quickstart:
     >>> from bzapper import Client
-    >>> client = Client("http://localhost:8080", "bz_live_...")
+    >>> client = Client("bz_live_...")
     >>> client.send_text("+5511999999999", "Hello from bZapper!")
 """
 
 from ._version import __version__
 from .client import Client
-from .errors import BzapperError
+from .errors import (
+    AuthenticationError,
+    BzapperError,
+    ConflictError,
+    NetworkError,
+    NotFoundError,
+    PermissionDeniedError,
+    RateLimitError,
+    ServerError,
+    ValidationError,
+)
 from .partner import PartnerClient
 from .webhooks import (
     Webhooks,
@@ -28,4 +38,13 @@ __all__ = [
     "verify_webhook",
     "construct_webhook_event",
     "__version__",
+    # Typed errors (all subclasses of BzapperError).
+    "AuthenticationError",
+    "PermissionDeniedError",
+    "NotFoundError",
+    "ConflictError",
+    "ValidationError",
+    "RateLimitError",
+    "ServerError",
+    "NetworkError",
 ]
