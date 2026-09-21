@@ -1,17 +1,23 @@
 """Todo envio aceita ``scheduled_at`` e o entrega no corpo da requisição.
 
-Regressão do bug 0.3.0: os métodos de mídia repassavam ``scheduled_at`` para
-``_send_media()``, cuja assinatura não tinha o parâmetro — TypeError em TODO
-envio de mídia. Os testes de mídia só exercitavam o caminho sem agendamento,
-então as duas assinaturas puderam divergir sem ninguém perceber.
+Regressão do bug de 0.4.0, 0.5.0 e 0.6.0: os métodos de mídia repassavam
+``scheduled_at`` para ``_send_media()``, cuja assinatura não tinha o parâmetro
+— TypeError em TODO envio de mídia, nas três releases. (A 0.3.0 era sã: o
+parâmetro ainda não existia; a 0.6.1 corrigiu.) Os testes de mídia só
+exercitavam o caminho sem agendamento, então as duas assinaturas puderam
+divergir sem ninguém perceber.
 
 Os testes interceptam ``urlopen``, e não ``_request``, para conferir o corpo
 que de fato vai para a rede (``_request`` remove chaves ``None``).
+
+Aqui fica só o COMPORTAMENTO do ``scheduled_at``. A guarda estrutural contra a
+classe do defeito — divergência entre a assinatura de um helper privado e o que
+os públicos lhe passam — vive em ``test_delegation.py``, que cobre os 83 pontos
+de delegação e não só o ``_send_media``.
 """
 
 from __future__ import annotations
 
-import inspect
 import io
 import json
 import unittest
@@ -119,60 +125,6 @@ class TestMediaSendBasePassthrough(SendTestCase):
                 "media": {"url": "https://example.com/boleto.pdf"},
             },
         )
-
-
-class TestSignatureAlignment(unittest.TestCase):
-    """As assinaturas não podem divergir de novo — o defeito era esse.
-
-    Trava a classe inteira do bug, não só o ``scheduled_at``: todo método
-    público de envio aceita o SendBase completo, e o ``_send_media`` aceita
-    tudo que os públicos repassam para ele.
-    """
-
-    SENDBASE = set(inspect.signature(Client._send_base).parameters) - {"to"}
-
-    def _keyword_only(self, fn: Any) -> set:
-        return {
-            name
-            for name, p in inspect.signature(fn).parameters.items()
-            if p.kind is p.KEYWORD_ONLY
-        }
-
-    def test_send_media_aceita_o_sendbase_inteiro(self) -> None:
-        faltando = self.SENDBASE - self._keyword_only(Client._send_media)
-        self.assertEqual(faltando, set(), f"_send_media não aceita: {sorted(faltando)}")
-
-    def test_metodos_publicos_aceitam_o_sendbase_inteiro(self) -> None:
-        # send_reaction recebe quoted_message_id como posicional obrigatório.
-        excecoes = {"send_reaction": {"quoted_message_id"}}
-        for name, fn in sorted(vars(Client).items()):
-            if not name.startswith("send_"):
-                continue
-            with self.subTest(method=name):
-                aceitos = self._keyword_only(fn) | set(
-                    inspect.signature(fn).parameters
-                )
-                faltando = self.SENDBASE - aceitos - excecoes.get(name, set())
-                self.assertEqual(faltando, set(), f"{name} não aceita: {sorted(faltando)}")
-
-    def test_publicos_de_midia_repassam_tudo_que_recebem(self) -> None:
-        """O que o público aceita, o _send_media tem que aceitar também."""
-        aceito_pelo_helper = self._keyword_only(Client._send_media)
-        for name in (
-            "send_image",
-            "send_video",
-            "send_document",
-            "send_audio",
-            "send_sticker",
-        ):
-            with self.subTest(method=name):
-                publico = self._keyword_only(getattr(Client, name))
-                faltando = publico - aceito_pelo_helper
-                self.assertEqual(
-                    faltando,
-                    set(),
-                    f"{name} aceita {sorted(faltando)}, que _send_media não recebe",
-                )
 
 
 if __name__ == "__main__":

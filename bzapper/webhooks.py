@@ -46,6 +46,8 @@ __all__ = [
     "EVENT_ID_HEADER",
     "EVENT_TYPE_HEADER",
     "EVENT_TYPES",
+    "CONNECT_EVENT_TYPES",
+    "ConnectionRef",
 ]
 
 SIGNATURE_HEADER = "X-Bzapper-Signature"
@@ -57,9 +59,16 @@ EVENT_TYPES = (
     "message.received", "message.sent", "message.delivered", "message.read", "message.failed",
     "instance.connected", "instance.disconnected", "instance.banned", "instance.logged_out",
     "instance.warming", "instance.status",
-    "group.joined", "group.participant_added", "group.participant_removed",
+    "group.joined", "group.left", "group.participant_added", "group.participant_removed",
     "group.participant_promoted", "group.participant_demoted",
     "group.subject_changed", "group.description_changed",
+    "connect.completed", "connect.suspended", "connect.resumed", "connect.revoked",
+)
+
+#: Ciclo de vida de uma conexão do bZapper Connect — só chegam ao webhook do
+#: PARCEIRO (assinado com o webhook secret do parceiro, mesmo esquema HMAC).
+CONNECT_EVENT_TYPES = (
+    "connect.completed", "connect.suspended", "connect.resumed", "connect.revoked",
 )
 
 Body = Union[str, bytes, bytearray]
@@ -84,11 +93,32 @@ class Sender:
     jid: Optional[str] = None
     lid: Optional[str] = None
     name: Optional[str] = None
+    #: Phone (``+DDIdigits``) when known; ``None`` if the person only arrived by @lid.
+    phone: Optional[str] = None
+
+
+@dataclass
+class ConnectionRef:
+    """bZapper Connect connection the event belongs to (partner webhooks only).
+
+    ``status`` is one of ``pending_account``, ``pending_payment``,
+    ``pending_number``, ``active``, ``suspended`` or ``revoked``.
+    """
+
+    id: Optional[str] = None
+    external_id: Optional[str] = None
+    account_id: Optional[str] = None
+    project_id: Optional[str] = None
+    status: Optional[str] = None
 
 
 @dataclass
 class WebhookEvent:
-    """A parsed, typed webhook event (the delivered envelope)."""
+    """A parsed, typed webhook event (the delivered envelope).
+
+    ``connection`` is only present on deliveries to a bZapper Connect partner
+    webhook (``connect.*`` events and forwarded project events).
+    """
 
     id: str
     type: str
@@ -100,11 +130,14 @@ class WebhookEvent:
     mentions: List[str] = field(default_factory=list)
     payload: Dict[str, Any] = field(default_factory=dict)
     raw: Dict[str, Any] = field(default_factory=dict)
+    # Sempre por último: campo novo não pode deslocar a ordem posicional.
+    connection: Optional[ConnectionRef] = None
 
     @classmethod
     def from_dict(cls, d: Dict[str, Any]) -> "WebhookEvent":
         g = d.get("group")
         s = d.get("sender")
+        c = d.get("connection")
         return cls(
             id=d.get("event_id", ""),
             type=d.get("event_type", ""),
@@ -112,10 +145,17 @@ class WebhookEvent:
             instance_id=d.get("instance_id"),
             client_reference=d.get("client_reference"),
             group=Group(jid=g.get("jid"), name=g.get("name")) if isinstance(g, dict) else None,
-            sender=Sender(jid=s.get("jid"), lid=s.get("lid"), name=s.get("name")) if isinstance(s, dict) else None,
+            sender=Sender(jid=s.get("jid"), lid=s.get("lid"), name=s.get("name"), phone=s.get("phone")) if isinstance(s, dict) else None,
             mentions=list(d.get("mentions") or []),
             payload=dict(d.get("payload") or {}),
             raw=d,
+            connection=ConnectionRef(
+                id=c.get("id"),
+                external_id=c.get("external_id"),
+                account_id=c.get("account_id"),
+                project_id=c.get("project_id"),
+                status=c.get("status"),
+            ) if isinstance(c, dict) else None,
         )
 
 

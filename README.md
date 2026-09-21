@@ -40,9 +40,20 @@ Every request sends `Authorization: Bearer <api_key>`, `Content-Type: applicatio
 ## Messages
 
 Every message method accepts the common **SendBase** options as keyword
-arguments: `instance_id`, `pool_id`, `quoted_message_id`, `client_reference`
-and `mentions`. Each returns the queued-message object
+arguments: `instance_id`, `pool_id`, `quoted_message_id`, `quoted_participant`
+(author of the quoted/reacted message — only needed in groups when it isn't in
+bZapper history), `client_reference` and `mentions` (JIDs or plain phones).
+Each returns the queued-message object
 (`message_id`, `status`, optional `client_reference`).
+
+Safe retries: pass `idempotency_key="..."` (sent as the `Idempotency-Key`
+header, up to 255 chars) to any send. Repeating it within 24h returns the SAME
+response without sending twice (`409 idempotency_in_progress` while the first
+is still running; `422 idempotency_key_reused` if the body changed).
+
+```python
+client.send_text("+5511999999999", "Order #42 confirmed", idempotency_key="order-42")
+```
 
 `to` is a phone in E.164 (`+5511999999999`) or a JID.
 
@@ -161,6 +172,7 @@ client.update_group_participants(
     group["jid"], inst_id, "add", ["+5511777777777"]  # add|remove|promote|demote
 )
 client.group_invite(group["jid"], inst_id)          # -> invite link/code
+client.preview_group_invite(inst_id, "Cabc123InviteCode")  # name/size WITHOUT joining
 client.join_group(inst_id, "Cabc123InviteCode")     # join via invite code
 client.leave_group(group["jid"], inst_id)
 
@@ -233,6 +245,180 @@ The typed `event` has `id`, `type`, `timestamp`, `instance_id`,
 `raw` dict. Use `event.id` for idempotency (the API may retry deliveries).
 For lower-level use there's `verify_webhook(secret, body, signature)` and
 `construct_webhook_event(secret, body, signature)`.
+
+## bZapper Connect
+
+**bZapper Connect** lets a partner software let ITS customers subscribe to
+bZapper Pro and connect WhatsApp without leaving the partner's product. The
+partner receives an API key authorized by the customer; the customer stays a
+direct bZapper account.
+
+The partner **backend** authenticates with the partner secret (`bz_partner_...`,
+sent as `Authorization: Bearer bz_partner_...`). Never send it to a browser.
+
+The flow:
+
+1. Your backend creates a session: `create_connect_session()` → `session_token` (30 min).
+2. Your front end opens the embedded component with that token
+   (`BzapperConnect.open({ session })`).
+3. When the customer finishes (Pro paid + WhatsApp connected), the component emits
+   `bzapper:complete` with a one-time `code` (valid 10 min).
+4. Your backend exchanges it: `exchange_code(code)` → the customer's `api_key`
+   (`bz_live_...`, shown once — store it).
+5. Your backend uses the regular `Client(api_key)` for that customer.
+
+### Partner client
+
+```python
+from bzapper import PartnerClient
+
+partner = PartnerClient("bz_partner_...")  # base_url / locale / timeout optional, like Client
+
+partner.me()  # who the secret belongs to
+
+session = partner.create_connect_session(
+    "customer-42",                        # external_id: YOUR id; same id = same connection
+    {
+        "name": "Ana Souza",              # name OR company is required
+        "email": "ana@boxy.com",          # required
+        "phone": "+5511988887777",        # optional, pre-fills the number
+        "company": "Boxy Pharma",         # optional, becomes the account/project name
+        "country": "BR",                  # optional, sets the currency
+    },
+    locale="pt-BR",
+)
+session["session_token"], session["expires_at"], session["connection"]
+
+conn = partner.exchange_code("cc_91ab...")  # -> connection + "api_key" (shown once)
+
+partner.list_connections()                                    # -> {"data": [...]}
+partner.list_connections(external_id="customer-42", status="active")
+partner.get_connection(conn["id"])
+partner.rotate_connection_key(conn["id"])  # new api_key; the previous one stops working
+partner.revoke_connection(conn["id"])      # 204; does NOT cancel the customer's plan
+```
+
+Connection `status`: `pending_account`, `pending_payment`, `pending_number`,
+`active`, `suspended`, `revoked`.
+
+With the customer's key, two error codes are specific to Connect:
+
+| `code`              | HTTP | Meaning |
+|---------------------|------|---------|
+| `connect_suspended` | 402  | The customer's Pro is unpaid. Resumes **by itself** once paid (`connect.resumed`). |
+| `connect_revoked`   | 401  | The connection ended (by the customer, by you, or account deletion). |
+
+### Partner webhooks
+
+Your partner webhook is signed with the **same** HMAC scheme
+(`X-Bzapper-Signature: sha256=<hex>` over the raw body), using your partner
+webhook secret — so `Webhooks` works unchanged. The envelope is the regular one
+plus `connection` (`event.connection`: `id`, `external_id`, `account_id`,
+`project_id`, `status`). Besides project events of active connections
+(messages, number status…), you receive the lifecycle events
+`connect.completed`, `connect.suspended`, `connect.resumed` and
+`connect.revoked` (also in `bzapper.webhooks.CONNECT_EVENT_TYPES`).
+
+### Complete backend example (Flask)
+
+```python
+import os
+
+from flask import Flask, abort, jsonify, request
+
+from bzapper import BzapperError, Client, PartnerClient
+from bzapper.webhooks import SignatureError, Webhooks
+
+app = Flask(__name__)
+partner = PartnerClient(os.environ["BZAPPER_PARTNER_SECRET"])
+hooks = Webhooks(secret=os.environ["BZAPPER_PARTNER_WEBHOOK_SECRET"])
+
+
+# 1) Your front end calls this, then opens BzapperConnect with the token.
+@app.post("/whatsapp/connect-session")
+def connect_session():
+    user = current_user()  # your own auth
+    s = partner.create_connect_session(
+        external_id=str(user.id),
+        customer={"name": user.name, "email": user.email, "company": user.company},
+        locale="pt-BR",
+    )
+    return jsonify(session=s["session_token"])
+
+
+# 2) The component emitted `bzapper:complete` with a code: exchange it on the backend.
+@app.post("/whatsapp/connect-complete")
+def connect_complete():
+    code = request.get_json()["code"]
+    try:
+        conn = partner.exchange_code(code)
+    except BzapperError as err:
+        return jsonify(error=err.code), err.status_code
+    save_customer_key(conn["external_id"], conn["id"], conn["api_key"])  # store it (encrypted)
+    return jsonify(status=conn["status"])
+
+
+# 3) Use the customer's key with the regular client.
+@app.post("/whatsapp/send")
+def send():
+    user = current_user()
+    client = Client(load_customer_key(user.id))
+    try:
+        res = client.send_text(request.get_json()["to"], request.get_json()["body"])
+    except BzapperError as err:
+        if err.code == "connect_suspended":   # 402: customer's Pro unpaid
+            return jsonify(error="Your WhatsApp plan is unpaid. Update the payment to resume."), 402
+        if err.code == "connect_revoked":     # 401: connection ended
+            forget_customer_key(user.id)
+            return jsonify(error="WhatsApp disconnected. Connect again."), 409
+        raise
+    return jsonify(res)
+
+
+# 4) Partner webhook: verify the signature, then react to connect.* events.
+@hooks.on("connect.completed")
+def _(event):
+    mark_whatsapp(event.connection.external_id, "active")
+
+@hooks.on("connect.suspended")
+def _(event):
+    mark_whatsapp(event.connection.external_id, "suspended")  # show "payment pending"
+
+@hooks.on("connect.resumed")
+def _(event):
+    mark_whatsapp(event.connection.external_id, "active")
+
+@hooks.on("connect.revoked")
+def _(event):
+    forget_customer_key(event.connection.external_id)
+
+@hooks.on("message.received")
+def _(event):
+    route_inbound(event.connection.external_id, event.payload)
+
+
+@app.post("/webhooks/bzapper")
+def bzapper_webhook():
+    try:
+        event = hooks.handle(
+            raw_body=request.get_data(),  # RAW bytes, never re-serialized JSON
+            signature=request.headers.get("X-Bzapper-Signature"),
+        )
+    except SignatureError:
+        abort(400)
+    # event.id is stable: skip duplicates, the API retries failed deliveries.
+    return "", 204
+```
+
+### Connected apps (customer side)
+
+With the customer's own key, list and disconnect partner apps using the
+account's WhatsApp:
+
+```python
+client.list_connected_apps()            # -> {"data": [{"id", "partner_name", "status", ...}]}
+client.revoke_connected_app("conn_id")  # admin; the partner's key stops working immediately
+```
 
 ## Error handling
 

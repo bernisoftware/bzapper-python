@@ -1,19 +1,75 @@
 # Publica o pacote `bzapper` no PyPI ao dar push de uma tag vX.Y.Z no repo público
 # bernisoftware/bzapper-python. Requer secret PYPI_TOKEN (token de projeto do PyPI).
+#
+# PUBLICAR EXIGE SUÍTE VERDE. Até 0.6.1 este workflow ia direto de `build` para
+# `twine upload` sem rodar teste nenhum — o CI do monorepo (Bitbucket) roda a
+# suíte, mas ele gateia o merge no main, não o push de tag no espelho público,
+# que é o que dispara o PyPI. Foi por essa fresta que 0.4.0, 0.5.0 e 0.6.0
+# foram publicadas com 100% dos envios de mídia quebrados (TypeError em
+# _send_media). Um `unittest discover` aqui teria barrado as três.
 name: publish
 on:
   push:
     tags: ['v*']
+
 jobs:
+  # Piso e teto da faixa declarada em pyproject.toml (requires-python >=3.9).
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        python-version: ['3.9', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      # Sem dependências: o SDK é stdlib puro e a suíte também.
+      - run: python -m unittest discover -s tests -v
+
   pypi:
+    needs: test # sem suíte verde não sobe nada
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+
+      # A tag é a versão publicada. Se ela divergir do pyproject.toml, o PyPI
+      # recebe um número diferente do que a tag promete (o bump e a tag são
+      # dois passos separados no release-sdks.sh).
+      - name: A tag bate com a versão do pyproject
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          proj="$(python -c "import re,pathlib;print(re.search(r'(?m)^version\s*=\s*\"([^\"]+)\"',pathlib.Path('pyproject.toml').read_text()).group(1))")"
+          [ "$tag" = "$proj" ] || { echo "::error::tag $GITHUB_REF_NAME != pyproject $proj"; exit 1; }
+          echo "versão $proj confirmada"
+
       - run: pip install build twine
       - run: python -m build
+
+      # A suíte acima roda contra a ÁRVORE. Aqui ela roda contra o WHEEL que
+      # vai subir — pega também erro de empacotamento (módulo que ficou de fora).
+      # Tudo a partir de /tmp: rodando da raiz do repo, o ./bzapper do fonte
+      # sombreia o instalado e a verificação vira teatro. A checagem de origem
+      # abaixo transforma esse sombreamento em erro em vez de falso verde.
+      - name: Suíte contra o wheel construído
+        run: |
+          python -m venv /tmp/verify
+          /tmp/verify/bin/pip install --quiet dist/*.whl
+          cd /tmp
+          /tmp/verify/bin/python - <<'EOF'
+          import bzapper, sys
+          origem = bzapper.__file__
+          print("importado de:", origem)
+          assert "site-packages" in origem, f"importou o fonte, não o wheel: {origem}"
+          print("versão instalada:", bzapper.__version__)
+          EOF
+          /tmp/verify/bin/python -m unittest discover \
+            -s "$GITHUB_WORKSPACE/tests" -t "$GITHUB_WORKSPACE/tests" -v
+
       - run: twine check dist/*
       - run: twine upload dist/*
         env:

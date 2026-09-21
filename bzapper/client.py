@@ -12,14 +12,18 @@ import urllib.parse
 import urllib.request
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
+from ._version import __version__
 from .errors import BzapperError
 
-__all__ = ["Client", "DEFAULT_BASE_URL"]
+__all__ = ["Client", "DEFAULT_BASE_URL", "USER_AGENT"]
 
 JSONDict = Dict[str, Any]
 
 #: URL base padrão da API (produção). Sobrescreva só em dev/self-host.
 DEFAULT_BASE_URL = "https://api.bzapper.com.br"
+
+#: Identificação enviada em X-Bzapper-Client (e User-Agent).
+USER_AGENT = f"bzapper-python/{__version__}"
 
 
 class Client:
@@ -67,6 +71,10 @@ class Client:
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
             "Accept": "application/json",
+            # Identifica SDK e versão para a API. Serve para avisarmos você
+            # quando uma versão que você roda tiver correção que exige update.
+            "X-Bzapper-Client": USER_AGENT,
+            "User-Agent": USER_AGENT,
         }
         if self.locale:
             headers["Accept-Language"] = self.locale
@@ -79,8 +87,11 @@ class Client:
         *,
         body: Optional[Mapping[str, Any]] = None,
         params: Optional[Mapping[str, Any]] = None,
+        headers: Optional[Mapping[str, str]] = None,
     ) -> Any:
         """Perform an HTTP request and return the decoded JSON body.
+
+        ``headers`` are merged over the default ones (e.g. ``Idempotency-Key``).
 
         Raises:
             BzapperError: On any non-2xx response.
@@ -96,8 +107,11 @@ class Client:
             payload = {k: v for k, v in body.items() if v is not None}
             data = json.dumps(payload).encode("utf-8")
 
+        all_headers = self._headers()
+        if headers:
+            all_headers.update(headers)
         req = urllib.request.Request(
-            url, data=data, headers=self._headers(), method=method
+            url, data=data, headers=all_headers, method=method
         )
 
         try:
@@ -143,6 +157,7 @@ class Client:
         mentions: Optional[Sequence[str]],
         sticky: Optional[bool],
         scheduled_at: Optional[str],
+        quoted_participant: Optional[str] = None,
     ) -> JSONDict:
         """Build the SendBase fields shared by every message endpoint."""
         return {
@@ -150,11 +165,17 @@ class Client:
             "instance_id": instance_id,
             "pool_id": pool_id,
             "quoted_message_id": quoted_message_id,
+            "quoted_participant": quoted_participant,
             "client_reference": client_reference,
             "mentions": list(mentions) if mentions is not None else None,
             "sticky": sticky,
             "scheduled_at": scheduled_at,
         }
+
+    @staticmethod
+    def _idempotency_headers(idempotency_key: Optional[str]) -> Optional[Dict[str, str]]:
+        """``Idempotency-Key`` header for a send, or ``None`` when not given."""
+        return {"Idempotency-Key": idempotency_key} if idempotency_key else None
 
     # -- messages --------------------------------------------------------------
 
@@ -170,6 +191,8 @@ class Client:
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
         scheduled_at: Optional[str] = None,
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Send a text message.
 
@@ -190,9 +213,12 @@ class Client:
             mentions=mentions,
             sticky=sticky,
             scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
         )
         payload["body"] = body
-        return self._request("POST", "/messages/text", body=payload)
+        return self._request(
+            "POST", "/messages/text", body=payload, headers=self._idempotency_headers(idempotency_key)
+        )
 
     def send_otp(
         self,
@@ -208,6 +234,8 @@ class Client:
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
         scheduled_at: Optional[str] = None,
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Send a verification code (OTP) as two messages.
 
@@ -231,13 +259,16 @@ class Client:
             mentions=mentions,
             sticky=sticky,
             scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
         )
         payload["code"] = code
         if body is not None:
             payload["body"] = body
         if expiry_minutes is not None:
             payload["expiry_minutes"] = expiry_minutes
-        return self._request("POST", "/messages/otp", body=payload)
+        return self._request(
+            "POST", "/messages/otp", body=payload, headers=self._idempotency_headers(idempotency_key)
+        )
 
     def send_image(
         self,
@@ -251,6 +282,8 @@ class Client:
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
         scheduled_at: Optional[str] = None,
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Send an image. ``media`` is a MediaInput dict (use ``url`` OR ``base64``)."""
         return self._send_media(
@@ -264,6 +297,8 @@ class Client:
             mentions=mentions,
             sticky=sticky,
             scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
+            idempotency_key=idempotency_key,
         )
 
     def send_video(
@@ -278,6 +313,8 @@ class Client:
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
         scheduled_at: Optional[str] = None,
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Send a video. ``media`` is a MediaInput dict (use ``url`` OR ``base64``)."""
         return self._send_media(
@@ -291,6 +328,8 @@ class Client:
             mentions=mentions,
             sticky=sticky,
             scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
+            idempotency_key=idempotency_key,
         )
 
     def send_document(
@@ -305,6 +344,8 @@ class Client:
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
         scheduled_at: Optional[str] = None,
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Send a document. ``media`` is a MediaInput dict (use ``url`` OR ``base64``)."""
         return self._send_media(
@@ -318,6 +359,8 @@ class Client:
             mentions=mentions,
             sticky=sticky,
             scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
+            idempotency_key=idempotency_key,
         )
 
     def send_audio(
@@ -332,6 +375,8 @@ class Client:
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
         scheduled_at: Optional[str] = None,
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Send audio. Set ``media["ptt"] = True`` for a voice note."""
         return self._send_media(
@@ -345,6 +390,8 @@ class Client:
             mentions=mentions,
             sticky=sticky,
             scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
+            idempotency_key=idempotency_key,
         )
 
     def send_sticker(
@@ -359,6 +406,8 @@ class Client:
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
         scheduled_at: Optional[str] = None,
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Send a sticker. ``media`` is a MediaInput dict (use ``url`` OR ``base64``)."""
         return self._send_media(
@@ -372,6 +421,8 @@ class Client:
             mentions=mentions,
             sticky=sticky,
             scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
+            idempotency_key=idempotency_key,
         )
 
     def _send_media(
@@ -387,6 +438,8 @@ class Client:
         mentions: Optional[Sequence[str]],
         sticky: Optional[bool],
         scheduled_at: Optional[str],
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         payload = self._send_base(
             to,
@@ -397,9 +450,12 @@ class Client:
             mentions=mentions,
             sticky=sticky,
             scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
         )
         payload["media"] = dict(media)
-        return self._request("POST", path, body=payload)
+        return self._request(
+            "POST", path, body=payload, headers=self._idempotency_headers(idempotency_key)
+        )
 
     def send_location(
         self,
@@ -416,6 +472,8 @@ class Client:
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
         scheduled_at: Optional[str] = None,
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Send a location (latitude/longitude, optional name/address)."""
         payload = self._send_base(
@@ -427,12 +485,15 @@ class Client:
             mentions=mentions,
             sticky=sticky,
             scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
         )
         payload["latitude"] = latitude
         payload["longitude"] = longitude
         payload["name"] = name
         payload["address"] = address
-        return self._request("POST", "/messages/location", body=payload)
+        return self._request(
+            "POST", "/messages/location", body=payload, headers=self._idempotency_headers(idempotency_key)
+        )
 
     def send_contact(
         self,
@@ -447,6 +508,8 @@ class Client:
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
         scheduled_at: Optional[str] = None,
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Send a contact card (name and/or raw vCard)."""
         payload = self._send_base(
@@ -458,10 +521,13 @@ class Client:
             mentions=mentions,
             sticky=sticky,
             scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
         )
         payload["contact_name"] = contact_name
         payload["contact_vcard"] = contact_vcard
-        return self._request("POST", "/messages/contact", body=payload)
+        return self._request(
+            "POST", "/messages/contact", body=payload, headers=self._idempotency_headers(idempotency_key)
+        )
 
     def send_poll(
         self,
@@ -477,6 +543,8 @@ class Client:
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
         scheduled_at: Optional[str] = None,
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Send a poll.
 
@@ -494,11 +562,14 @@ class Client:
             mentions=mentions,
             sticky=sticky,
             scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
         )
         payload["name"] = name
         payload["options"] = list(options)
         payload["selectable_count"] = selectable_count
-        return self._request("POST", "/messages/poll", body=payload)
+        return self._request(
+            "POST", "/messages/poll", body=payload, headers=self._idempotency_headers(idempotency_key)
+        )
 
     def send_reaction(
         self,
@@ -512,6 +583,8 @@ class Client:
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
         scheduled_at: Optional[str] = None,
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """React to a message.
 
@@ -528,9 +601,12 @@ class Client:
             mentions=mentions,
             sticky=sticky,
             scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
         )
         payload["emoji"] = emoji
-        return self._request("POST", "/messages/reaction", body=payload)
+        return self._request(
+            "POST", "/messages/reaction", body=payload, headers=self._idempotency_headers(idempotency_key)
+        )
 
     def send_buttons(
         self,
@@ -546,6 +622,8 @@ class Client:
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
         scheduled_at: Optional[str] = None,
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Send interactive buttons.
 
@@ -567,11 +645,14 @@ class Client:
             mentions=mentions,
             sticky=sticky,
             scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
         )
         payload["body"] = body
         payload["footer"] = footer
         payload["buttons"] = [dict(b) for b in buttons]
-        return self._request("POST", "/messages/buttons", body=payload)
+        return self._request(
+            "POST", "/messages/buttons", body=payload, headers=self._idempotency_headers(idempotency_key)
+        )
 
     def send_list(
         self,
@@ -588,6 +669,8 @@ class Client:
         mentions: Optional[Sequence[str]] = None,
         sticky: Optional[bool] = None,
         scheduled_at: Optional[str] = None,
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Send an interactive list.
 
@@ -610,12 +693,15 @@ class Client:
             mentions=mentions,
             sticky=sticky,
             scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
         )
         payload["body"] = body
         payload["footer"] = footer
         payload["button_text"] = button_text
         payload["sections"] = [dict(s) for s in sections]
-        return self._request("POST", "/messages/list", body=payload)
+        return self._request(
+            "POST", "/messages/list", body=payload, headers=self._idempotency_headers(idempotency_key)
+        )
 
     # -- instances -------------------------------------------------------------
 
@@ -860,6 +946,46 @@ class Client:
         """Revoke a tenant API key by ID."""
         return self._request("DELETE", f"/keys/{key_id}")
 
+    # -- advisories -----------------------------------------------------------
+
+    def list_advisories(self) -> JSONDict:
+        """List pending integration advisories. ``GET /advisories``
+
+        An advisory means a change on our side requires you to update YOUR code
+        (an SDK to upgrade, a payload or endpoint that changed). It is never a
+        changelog: you only receive advisories that affect your account, matched
+        against the SDK version you run and the features you actually use.
+
+        Each item has ``id``, ``title``, ``impact``, ``action``, ``link`` and
+        ``published_at``. Use ``action`` — it says what to do.
+        """
+        return self._request("GET", "/advisories")
+
+    def mark_advisory_read(self, advisory_id: str) -> None:
+        """Dismiss an advisory once handled. ``POST /advisories/{id}/read``"""
+        return self._request("POST", f"/advisories/{advisory_id}/read")
+
+    # -- connected apps (bZapper Connect, customer side) -----------------------
+
+    def list_connected_apps(self) -> JSONDict:
+        """List partner apps connected to this account. ``GET /me/connections``
+
+        Partner software using this account's WhatsApp through bZapper Connect.
+        Returns ``{"data": [...]}``; each item has ``id``, ``external_id``,
+        ``status``, ``partner_name``, ``partner_logo_url``, ``numbers`` and the
+        ``activated_at``/``suspended_at``/``revoked_at`` timestamps.
+        """
+        return self._request("GET", "/me/connections")
+
+    def revoke_connected_app(self, connection_id: str) -> None:
+        """Disconnect a partner app (admin). ``DELETE /me/connections/{id}``
+
+        The partner's key stops working immediately (it answers 401
+        ``connect_revoked``). Does not change your plan.
+        """
+        path = f"/me/connections/{urllib.parse.quote(connection_id, safe='')}"
+        return self._request("DELETE", path)
+
     # -- webhooks (management; to RECEIVE+process events use bzapper.webhooks) --
 
     def list_webhooks(self) -> JSONDict:
@@ -1021,6 +1147,19 @@ class Client:
         """Fetch a single group by JID."""
         return self._request(
             "GET", f"/groups/{jid}", params={"instance_id": instance_id}
+        )
+
+    def preview_group_invite(self, instance_id: str, code: str) -> JSONDict:
+        """Show the group behind an invite (name, topic, size) WITHOUT joining.
+
+        Use it to confirm before putting the number in someone else's group.
+        ``code`` is the invite code or link. POST /groups/join/preview.
+        """
+        return self._request(
+            "POST",
+            "/groups/join/preview",
+            body={"code": code},
+            params={"instance_id": instance_id},
         )
 
     def join_group(self, instance_id: str, code: str) -> JSONDict:
