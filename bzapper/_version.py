@@ -6,4 +6,4 @@ volta fecharia um ciclo. O ``release-sdks.sh`` bumpa este arquivo, e o
 ``tests/test_version.py`` trava a igualdade com o ``pyproject.toml``.
 """
 
-__version__ = "0.8.0"
+__version__ = "0.8.1"
