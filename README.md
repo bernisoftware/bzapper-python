@@ -7,7 +7,7 @@ Zero runtime dependencies (pure standard library). Python 3.9+.
 ## Install
 
 ```bash
-pip install bzapper==0.7.1
+pip install bzapper==0.8.0
 ```
 
 **Pin the exact version** (`bzapper==X.Y.Z` in `requirements.txt` / `pyproject.toml`).
@@ -282,6 +282,57 @@ client.delete_suppression("+5511888888888")
 client.delete_contact(c["id"])
 ```
 
+### Bulk import
+
+Up to **1000 rows per call**, upserted by phone. A new contact comes in as
+`source: import` / `status: pending_validation` (it still needs opt-in before a
+campaign); an existing one has only the fields you sent updated — a blank value
+never erases what is there. Tags and groups are created on demand. A bad row is
+reported and **does not** fail the rest of the call: `errors` carries
+`phone_required`, `invalid_phone`, `invalid_email`, `write_failed` or
+`taxonomy_failed`, while `skipped_rows` carries `duplicate_phone`, `suppressed`,
+`opted_out`, `blocked`, `unreachable` and `deleted` (an opted-out contact is
+never resurrected). Use `dry_run=True` to validate without writing anything.
+
+```python
+result = client.import_contacts(
+    [
+        {"phone": "+5511999999999", "name": "Ana", "email": "ana@example.com",
+         "tags": ["lead"], "groups": ["clients"]},
+        {"phone": "+5511888888888", "name": "Bar do Zé",
+         "document": "12.345.678/0001-90", "document_type": "cnpj",
+         "address": {"street": "Av. Paulista", "number": "1000",
+                     "city": "São Paulo", "state": "SP", "zip": "01310-100",
+                     "country": "BR"}},
+    ],
+    dry_run=True,   # try it dry first, then run it for real
+)
+print(result["total"], result["created"], result["updated"], result["skipped"])
+for row in result.get("errors", []) + result.get("skipped_rows", []):
+    print(row["index"], row["phone"], row["reason"], row.get("detail"))
+```
+
+### CSV export
+
+`export_contacts()` is the one endpoint that does **not** answer JSON: it returns
+the CSV itself, as a `str` (UTF-8 decoded, BOM stripped, quoting untouched). It
+takes the same filters as `list_contacts` (no `offset`), columns are
+`phone,name,email,status,source,tags,groups,created_at,last_activity_at`, tags and
+groups come `;`-joined and timestamps are RFC 3339 UTC. The API streams the file;
+cap it with `limit` (max `100000`) and export a big base in slices.
+
+```python
+csv_text = client.export_contacts(tags=["vip"], status="active", sort="name", limit=5000)
+
+with open("contacts.csv", "w", encoding="utf-8", newline="") as fh:
+    fh.write(csv_text)
+
+# Or read it straight from memory with the stdlib:
+import csv, io
+for row in csv.DictReader(io.StringIO(csv_text)):
+    print(row["phone"], row["name"], row["tags"])
+```
+
 ## Campaigns
 
 ```python
@@ -344,6 +395,26 @@ created = client.create_key("CI key", role="agent")  # role: "admin" | "agent"
 print(created["api_key"])  # raw key — shown only once, store it now
 client.revoke_key(created["key"]["id"])
 ```
+
+### Rotating a key without downtime
+
+`rotate_key()` (admin only) mints a **new** key that inherits the old one's name,
+role, scopes and project, and keeps the old one working for a grace period — so a
+deploy in flight does not break halfway through the swap. Past the deadline the old
+key answers `401 key_expired`. `revoke_in_seconds=0` kills it right away; the
+default is `86400` (24 h) and the maximum is `2592000` (30 days). The rotated key
+carries `expires_at` (when it stops working) and `rotated_to` (the id of its
+replacement); partner keys rotate through `PartnerClient.rotate_connection_key`.
+
+```python
+rotated = client.rotate_key(created["key"]["id"], revoke_in_seconds=3600)
+print(rotated["api_key"])            # raw NEW key — shown only once, store it now
+print(rotated["old_key_expires_at"]) # when the old one stops working (None = already dead)
+print(rotated["key"]["id"], rotated["previous_key"]["rotated_to"])
+```
+
+Errors here are `admin_required` (403), `not_found` (404), `key_already_revoked`
+and `key_already_expired` (409).
 
 ## Usage
 
@@ -601,7 +672,7 @@ try:
 except RateLimitError as err:
     print("slow down for", err.retry_after, "s")
 except BzapperError as err:
-    if err.code == "instance_not_connected":
+    if err.code == "not_connected":
         ...  # reconnect flow
     else:
         print(err.code, err.status_code, err.message, err.request_id)

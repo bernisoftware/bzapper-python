@@ -97,6 +97,7 @@ OPS: Dict[str, Call] = {
     "listMyKeys": client("list_keys"),
     "createMyKey": client("create_key"),
     "revokeMyKey": client("revoke_key"),
+    "rotateMyKey": client("rotate_key"),
     # brand
     "getBrand": client("get_brand"),
     "setBrand": profile("set_brand"),
@@ -115,6 +116,7 @@ OPS: Dict[str, Call] = {
     "optOutContact": client("opt_out_contact"),
     "suppressContact": client("suppress_contact"),
     "optInContact": client("opt_in_contact"),
+    "importContacts": client("import_contacts"),
     "contactsCheck": client("contacts_check"),
     "listTags": client("list_tags"),
     "createTag": client("create_tag"),

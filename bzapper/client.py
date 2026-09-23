@@ -120,15 +120,20 @@ class Client:
         headers: Optional[Mapping[str, str]] = None,
         idempotency_key: Optional[str] = None,
         multipart: Optional[Tuple[bytes, str]] = None,
+        accept: Optional[str] = None,
+        text: bool = False,
     ) -> Any:
         """Perform ONE logical call (1 attempt + up to ``max_retries`` retries).
 
         ``body`` keys whose value is ``None`` are omitted (never sent). ``headers``
         are merged over the default ones (e.g. ``Idempotency-Key``). ``multipart``
-        is a pre-encoded ``(bytes, content_type)`` pair.
+        is a pre-encoded ``(bytes, content_type)`` pair. ``accept`` overrides the
+        ``Accept`` header and ``text=True`` returns the 2xx body as a string
+        without ever trying to parse JSON (``GET /contacts/export`` → CSV).
 
         Returns:
-            The decoded JSON body, or ``None`` for an empty (e.g. 204) response.
+            The decoded JSON body, or ``None`` for an empty (e.g. 204) response;
+            the raw text when ``text=True``.
 
         Raises:
             BzapperError: (or a subclass) on any non-2xx response, a network
@@ -142,6 +147,8 @@ class Client:
             url = f"{url}?{query}"
 
         all_headers = self._headers()
+        if accept:
+            all_headers["Accept"] = accept
         # Mesmo id em todas as tentativas desta chamada: é como o suporte correlaciona.
         all_headers["X-Request-Id"] = uuid.uuid4().hex
         data: Optional[bytes] = None
@@ -175,6 +182,8 @@ class Client:
                 raise _http.network_error(self.base_url, exc, request_id) from exc
 
             if 200 <= status < 300:
+                if text:
+                    return _http.decode_text(raw)
                 return _http.decode_success(status, resp_headers, raw, request_id)
             if status in _http.RETRY_STATUSES and attempt < self.max_retries:
                 self._sleep(_http.retry_delay(attempt, _http.header(resp_headers, "Retry-After")))
@@ -1519,6 +1528,51 @@ class Client:
             "DELETE", f"/keys/{self._seg(key_id, 'key_id')}", idempotency_key=idempotency_key
         )
 
+    def rotate_key(
+        self,
+        key_id: str,
+        *,
+        revoke_in_seconds: Optional[int] = None,
+        idempotency_key: Optional[str] = None,
+    ) -> JSONDict:
+        """Rotate a tenant API key (admin only). ``POST /keys/{id}/rotate``
+
+        Creates a NEW key inheriting the old one's name, role, scopes and project,
+        and keeps the OLD one working for a grace period — so a running deploy does
+        not break in the middle of the swap. Past the deadline the old key answers
+        ``401 key_expired``. Partner keys (bZapper Connect) rotate through
+        :meth:`PartnerClient.rotate_connection_key` instead.
+
+        Args:
+            key_id: ID of the key being rotated.
+            revoke_in_seconds: Grace period for the OLD key in seconds (default
+                ``86400``; ``0`` revokes it immediately; max ``2592000`` = 30 days).
+            idempotency_key: Optional idempotency key (24 h) for this call.
+
+        Returns:
+            ``{"api_key", "key", "previous_key", "old_key_expires_at"}`` — the raw
+            ``api_key`` is shown ONLY here, and ``old_key_expires_at`` is ``None``
+            when the old key was revoked immediately. The rotated key carries
+            ``expires_at`` (when it stops working) and ``rotated_to`` (the id of
+            the key that replaced it).
+
+        Raises:
+            BzapperError: ``admin_required`` (403), ``not_found`` (404),
+                ``key_already_revoked`` / ``key_already_expired`` (409).
+
+        Example:
+            >>> rotated = client.rotate_key(old_id, revoke_in_seconds=3600)
+            >>> rotated["api_key"]  # store it now; it is never shown again
+            'bz_live_...'
+        """
+        body = {"revoke_in_seconds": revoke_in_seconds} if revoke_in_seconds is not None else None
+        return self._request(
+            "POST",
+            f"/keys/{self._seg(key_id, 'key_id')}/rotate",
+            body=body,
+            idempotency_key=idempotency_key,
+        )
+
     # -- advisories -----------------------------------------------------------
 
     def list_advisories(self) -> JSONDict:
@@ -2302,6 +2356,150 @@ class Client:
             "POST",
             f"/contacts/{self._seg(contact_id, 'contact_id')}/optin",
             idempotency_key=idempotency_key,
+        )
+
+    # -- contacts: bulk import and CSV export ----------------------------------
+
+    def import_contacts(
+        self,
+        contacts: Sequence[Mapping[str, Any]],
+        *,
+        dry_run: Optional[bool] = None,
+        idempotency_key: Optional[str] = None,
+    ) -> JSONDict:
+        """Import (upsert) contacts in bulk by phone. ``POST /contacts/import``
+
+        Up to **1000** rows per call. A new contact is created with
+        ``source: import`` and ``status: pending_validation`` (it still needs
+        opt-in before a campaign); an existing one has only the informed fields
+        updated — a blank value never erases what is there. A suppressed, opted-out
+        or blocked contact lands in ``skipped_rows`` and is never resurrected. Tags
+        and groups are created on demand. A bad row goes to ``errors`` and does NOT
+        fail the rest of the call.
+
+        Args:
+            contacts: Rows of ``{phone, name?, email?, document?, document_type?,
+                address?, tags?, groups?}`` — ``phone`` in ``+DDIdigits`` is the only
+                required field, ``address`` is ``{street, number, complement,
+                district, city, state, zip, country}``. Keys whose value is ``None``
+                are not sent.
+            dry_run: ``True`` validates everything and writes nothing.
+            idempotency_key: Optional idempotency key (24 h) for this call.
+
+        Returns:
+            ``{"dry_run", "total", "created", "updated", "skipped", "failed",
+            "skipped_rows": [...], "errors": [...]}``; each issue is
+            ``{"index", "phone", "reason", "detail"}`` where ``index`` is the
+            position in the array you sent and ``reason`` one of
+            ``phone_required``, ``invalid_phone``, ``invalid_email``,
+            ``write_failed``, ``taxonomy_failed`` (errors) or ``duplicate_phone``,
+            ``suppressed``, ``opted_out``, ``blocked``, ``unreachable``,
+            ``deleted`` (skips).
+
+        Raises:
+            BzapperError: ``invalid_body`` / ``contacts_required`` (400) or
+                ``import_too_large`` (422, more than 1000 rows).
+
+        Example:
+            >>> result = client.import_contacts(
+            ...     [{"phone": "+5511999990000", "name": "Ana", "tags": ["lead"]}],
+            ...     dry_run=True,
+            ... )
+            >>> result["created"], result["skipped_rows"]
+            (1, [])
+        """
+        rows = [
+            {key: value for key, value in dict(row).items() if value is not None}
+            for row in contacts
+        ]
+        return self._request(
+            "POST",
+            "/contacts/import",
+            body={"contacts": rows, "dry_run": dry_run},
+            idempotency_key=idempotency_key,
+        )
+
+    def export_contacts(
+        self,
+        *,
+        search: Optional[str] = None,
+        project_id: Optional[str] = None,
+        instance_id: Optional[str] = None,
+        limit: Optional[int] = None,
+        tags: Optional[Sequence[str]] = None,
+        tags_match: Optional[str] = None,
+        groups: Optional[Sequence[str]] = None,
+        status: Optional[str] = None,
+        city: Optional[str] = None,
+        state: Optional[str] = None,
+        country: Optional[str] = None,
+        zip: Optional[str] = None,
+        document: Optional[str] = None,
+        has_email: Optional[bool] = None,
+        last_activity_after: Optional[str] = None,
+        last_activity_before: Optional[str] = None,
+        created_after: Optional[str] = None,
+        created_before: Optional[str] = None,
+        sort: Optional[str] = None,
+    ) -> str:
+        """Export the contact base as **CSV text**. ``GET /contacts/export``
+
+        Same filters as :meth:`list_contacts` (minus ``offset``). This endpoint is
+        the one exception to "the API always answers JSON": it returns ``text/csv``,
+        so this method returns the CSV **as a ``str``** — decoded UTF-8, BOM
+        stripped, rows exactly as the API wrote them (quoting and commas intact).
+        Nothing here tries to parse JSON.
+
+        Columns: ``phone,name,email,status,source,tags,groups,created_at,
+        last_activity_at`` — tags and groups ``;``-joined, timestamps RFC 3339 UTC.
+
+        Args:
+            limit: Cap of exported rows (max ``100000``). The API streams the
+                result; for a very large base, export in slices by filter and
+                write each chunk to disk as it arrives.
+            search, project_id, instance_id, tags, tags_match, groups, status,
+                city, state, country, zip, document, has_email,
+                last_activity_after, last_activity_before, created_after,
+                created_before, sort: See :meth:`list_contacts`.
+
+        Returns:
+            The CSV document, including its header line (``""`` if the API answers
+            an empty body).
+
+        Example:
+            >>> csv_text = client.export_contacts(tags=["lead"], status="active")
+            >>> with open("contacts.csv", "w", encoding="utf-8", newline="") as fh:
+            ...     fh.write(csv_text)
+            >>> import csv, io
+            >>> next(csv.DictReader(io.StringIO(csv_text)))["phone"]
+            '+5511999990000'
+        """
+        return self._request(
+            "GET",
+            "/contacts/export",
+            params={
+                "search": search,
+                "project_id": project_id,
+                "instance_id": instance_id,
+                "limit": limit,
+                "tags": tags,
+                "tags_match": tags_match,
+                "groups": groups,
+                "status": status,
+                "city": city,
+                "state": state,
+                "country": country,
+                "zip": zip,
+                "document": document,
+                "has_email": has_email,
+                "last_activity_after": last_activity_after,
+                "last_activity_before": last_activity_before,
+                "created_after": created_after,
+                "created_before": created_before,
+                "sort": sort,
+            },
+            accept="text/csv",
+            text=True,
         )
 
     # -- tags and contact groups (dictionaries) --------------------------------

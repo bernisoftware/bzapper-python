@@ -293,6 +293,16 @@ def decode_success(status: int, headers: Any, raw: bytes, sent_request_id: str) 
     )
 
 
+def decode_text(raw: bytes) -> str:
+    """2xx body as TEXT — never parsed as JSON (``exportContacts`` answers ``text/csv``).
+
+    A leading UTF-8 BOM (spreadsheets love it) is dropped; an empty body is ``""``.
+    """
+    if not raw:
+        return ""
+    return raw.decode("utf-8-sig", "replace")
+
+
 def network_error(base_url: str, exc: BaseException, request_id: str) -> NetworkError:
     reason = getattr(exc, "reason", None) or exc
     return NetworkError(

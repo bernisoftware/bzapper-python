@@ -290,5 +290,66 @@ class TestUpload(ServerTestCase):
         self.assertTrue(r["headers"]["idempotency-key"])
 
 
+class TestImportAndRotate(ServerTestCase):
+    """O que os casos gerados não alcançam nas duas escritas novas."""
+
+    def test_import_contacts_drops_empty_row_fields(self) -> None:
+        self.server.reset([ok({"total": 2, "created": 2, "updated": 0, "skipped": 0, "failed": 0})])
+        out = self.client().import_contacts(
+            [
+                {"phone": "+5511999990000", "name": "Ana", "email": None, "tags": ["lead"]},
+                {"phone": "+5511888880000", "address": {"city": "São Paulo", "state": "SP"}},
+            ]
+        )
+        r = self.server.requests[0]
+        self.assertEqual(r["raw_path"], "/contacts/import")
+        self.assertEqual(
+            json_body(r),
+            {
+                "contacts": [
+                    {"phone": "+5511999990000", "name": "Ana", "tags": ["lead"]},
+                    {"phone": "+5511888880000", "address": {"city": "São Paulo", "state": "SP"}},
+                ]
+            },
+        )
+        self.assertTrue(r["headers"]["idempotency-key"])
+        self.assertEqual(out["created"], 2)
+
+    def test_import_contacts_dry_run_flag(self) -> None:
+        self.server.reset([ok({"dry_run": True, "total": 1, "created": 1,
+                               "updated": 0, "skipped": 0, "failed": 0})])
+        self.client().import_contacts([{"phone": "+5511999990000"}], dry_run=True)
+        self.assertEqual(
+            json_body(self.server.requests[0]),
+            {"contacts": [{"phone": "+5511999990000"}], "dry_run": True},
+        )
+
+    def test_rotate_key_without_a_grace_period_sends_no_body(self) -> None:
+        self.server.reset([ok({"api_key": "bz_live_new", "key": {"id": "k2"}})])
+        out = self.client().rotate_key("k1")
+        r = self.server.requests[0]
+        self.assertEqual(r["method"], "POST")
+        self.assertEqual(r["raw_path"], "/keys/k1/rotate")
+        self.assertIsNone(json_body(r))
+        self.assertNotIn("content-type", r["headers"])
+        self.assertTrue(r["headers"]["idempotency-key"])
+        self.assertEqual(out["api_key"], "bz_live_new")
+
+    def test_rotate_key_revoke_now_sends_zero(self) -> None:
+        self.server.reset([ok({"api_key": "bz_live_new", "key": {"id": "k2"},
+                               "old_key_expires_at": None})])
+        out = self.client().rotate_key("k1", revoke_in_seconds=0)
+        self.assertEqual(json_body(self.server.requests[0]), {"revoke_in_seconds": 0})
+        self.assertIsNone(out["old_key_expires_at"])
+
+    def test_rotate_key_validates_the_path_segment(self) -> None:
+        self.server.reset([])
+        with self.assertRaises(ValueError):
+            self.client().rotate_key("")
+        with self.assertRaises(ValueError):
+            self.client().rotate_key("..")
+        self.assertEqual(self.server.requests, [], "nada vai para a rede")
+
+
 if __name__ == "__main__":
     unittest.main()
