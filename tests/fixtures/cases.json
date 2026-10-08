@@ -6682,7 +6682,8 @@
       "args": {
         "body": {
           "client_reference": "client_reference-1",
-          "contact_name": "contact_name-1",
+          "contact_name": "Rita Lee",
+          "contact_phone": "+5511977776666",
           "contact_vcard": "contact_vcard-1",
           "force": true,
           "groups": [
@@ -6710,7 +6711,8 @@
           "request": {
             "body": {
               "client_reference": "client_reference-1",
-              "contact_name": "contact_name-1",
+              "contact_name": "Rita Lee",
+              "contact_phone": "+5511977776666",
               "contact_vcard": "contact_vcard-1",
               "force": true,
               "groups": [

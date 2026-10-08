@@ -7,7 +7,7 @@ Zero runtime dependencies (pure standard library). Python 3.9+.
 ## Install
 
 ```bash
-pip install bzapper==0.8.1
+pip install bzapper==0.8.2
 ```
 
 **Pin the exact version** (`bzapper==X.Y.Z` in `requirements.txt` / `pyproject.toml`).
@@ -110,7 +110,7 @@ client.send_sticker("+5511999999999", {"url": "https://example.com/sticker.webp"
 client.send_location("+5511999999999", -23.5613, -46.6565, name="Av. Paulista", address="São Paulo")
 
 # Contact
-client.send_contact("+5511999999999", contact_name="Berni Software")
+client.send_contact("+5511999999999", contact_name="Berni Software", contact_phone="+5511977776666")
 
 # Poll
 client.send_poll("+5511999999999", "Pizza or sushi?", ["Pizza", "Sushi"], selectable_count=1)

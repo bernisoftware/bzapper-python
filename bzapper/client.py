@@ -650,6 +650,7 @@ class Client:
         to: str,
         *,
         contact_name: Optional[str] = None,
+        contact_phone: Optional[str] = None,
         contact_vcard: Optional[str] = None,
         instance_id: Optional[str] = None,
         pool_id: Optional[str] = None,
@@ -664,7 +665,11 @@ class Client:
         tags: Optional[Sequence[str]] = None,
         force: Optional[bool] = None,
     ) -> JSONDict:
-        """Send a contact card (name and/or raw vCard)."""
+        """Send a contact card: ready ``contact_vcard``, or ``contact_name`` + ``contact_phone``.
+
+        ``contact_phone`` is the phone of the person being SHARED (E.164), never
+        the destination.
+        """
         payload = self._send_base(
             to,
             instance_id=instance_id,
@@ -680,6 +685,7 @@ class Client:
             force=force,
         )
         payload["contact_name"] = contact_name
+        payload["contact_phone"] = contact_phone
         payload["contact_vcard"] = contact_vcard
         return self._request(
             "POST", "/messages/contact", body=payload, headers=self._idempotency_headers(idempotency_key)
