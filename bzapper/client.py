@@ -301,7 +301,10 @@ class Client:
 
         Returns:
             The queued-message object (``message_id``, ``status`` and optional
-            ``client_reference``).
+            ``client_reference``). On the official rail it may also carry
+            ``delivery`` (``{"via", "template", "note"}``) — present only when the
+            24-hour window was closed and the project fallback template went out
+            instead (see :meth:`set_fallback_template`).
         """
         payload = self._send_base(
             to,
@@ -1021,6 +1024,15 @@ class Client:
 
         Requires the Pro plan and the Campaigns add-on. Each variation body accepts
         ``{variables}`` and spintax ``{a|b|c}``.
+
+        On the OFFICIAL rail each variation is an approved template instead of a
+        body — free text only reaches people who wrote in the last 24h::
+
+            {"body": "", "template": {"name": "promo", "language": "pt_BR",
+                                      "variables": ["{nome}", "OUTUBRO10"]}}
+
+        The template must exist, be approved and receive as many ``variables`` as
+        its body expects; each value accepts ``{column}`` from the recipient list.
         """
         body: JSONDict = {"variations": list(variations)}
         if name is not None:
@@ -1094,7 +1106,7 @@ class Client:
         )
 
     def get_campaign_eligibility(self, *, pool_id: Optional[str] = None) -> JSONDict:
-        """Per-number campaign eligibility (connection + warm-up). ``GET /campaigns/eligibility``
+        """Per-number campaign eligibility (connection and age). ``GET /campaigns/eligibility``
 
         Args:
             pool_id: Optional — only the numbers of this pool.
@@ -1229,7 +1241,7 @@ class Client:
             idempotency_key=idempotency_key,
         )
 
-    # -- pools (anti-ban number rotation) --------------------------------------
+    # -- pools (number redundancy) ---------------------------------------------
 
     def list_pools(self) -> JSONDict:
         """List the tenant's number pools. ``GET /pools``"""
@@ -1306,7 +1318,7 @@ class Client:
         Args:
             phone: Phone in ``+DDI...`` format (e.g. ``+5511999999999``).
             nickname: Optional human label.
-            proxy_url: Optional per-instance proxy URL (anti-ban / IP isolation).
+            proxy_url: Optional per-instance proxy URL (network configuration).
         """
         body = {"phone": phone, "nickname": nickname, "proxy_url": proxy_url}
         return self._request("POST", "/instances", body=body, idempotency_key=idempotency_key)
@@ -1478,8 +1490,8 @@ class Client:
     def connect_official_account(
         self,
         waba_id: str,
-        phone_number_id: str,
-        access_token: str,
+        phone_number_id: Optional[str] = None,
+        access_token: Optional[str] = None,
         *,
         display_number: Optional[str] = None,
         verified_name: Optional[str] = None,
@@ -1488,8 +1500,26 @@ class Client:
     ) -> JSONDict:
         """Connect a WhatsApp Business account with manual credentials. ``POST /official/account``
 
-        Only for projects created with ``api_mode="OFFICIAL"``.
+        Only for projects created with ``api_mode="OFFICIAL"``. Calling it again
+        replaces the credentials — that is the reconnection path when a token is
+        revoked; it never creates a second account for the same project.
+
+        Args:
+            waba_id: The WhatsApp Business Account id.
+            phone_number_id: Optional — discovered from the WABA when omitted. If
+                the WABA holds more than one number the API answers 409
+                ``multiple_phone_numbers`` with the list (in ``error.body``), so
+                the choice stays with you instead of being guessed.
+            access_token: The WABA token (required; stored encrypted at rest). A
+                token from Meta's "API Setup" screen expires in 24h — for a
+                lasting connection use a system user token.
+            status: ``PENDENTE`` (default), ``AGUARDANDO_PAGAMENTO`` or ``ATIVA``.
+
+        Raises:
+            ValueError: ``access_token`` missing (before any request).
         """
+        if not access_token:
+            raise ValueError("connect_official_account: access_token é obrigatório.")
         body = {
             "waba_id": waba_id,
             "phone_number_id": phone_number_id,
@@ -1505,6 +1535,561 @@ class Client:
     def disconnect_official_account(self, *, idempotency_key: Optional[str] = None) -> None:
         """Disconnect the project's WhatsApp Business account. ``DELETE /official/account``"""
         return self._request("DELETE", "/official/account", idempotency_key=idempotency_key)
+
+    def get_official_signup_config(self) -> JSONDict:
+        """What the browser needs to open Meta's Embedded Signup. ``GET /official/signup-config``
+
+        Returns:
+            ``{"enabled", "app_id", "config_id", "graph_version"}`` — public by
+            nature (the customer's browser sees them; the app secret never leaves
+            the server). ``enabled`` false means this installation has no
+            Embedded Signup: offer the manual path (:meth:`connect_official_account`).
+        """
+        return self._request("GET", "/official/signup-config")
+
+    def complete_official_signup(
+        self,
+        code: str,
+        waba_id: str,
+        *,
+        phone_number_id: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
+    ) -> JSONDict:
+        """Finish the connection with the code returned by Meta's popup. ``POST /official/embedded-signup``
+
+        Exchanges the one-time ``code`` for a lasting token, subscribes the app
+        to the WABA's webhooks and registers the number on the Cloud API. The
+        code expires about 30 seconds after the popup closes — send it straight
+        through.
+
+        Args:
+            code: One-time code from the Embedded Signup callback.
+            waba_id: The WABA id the popup returned.
+            phone_number_id: Optional — discovered from the WABA when omitted.
+
+        Returns:
+            ``{"account", "warning"}``. A non-fatal step that failed comes back in
+            ``warning`` (``webhooks_not_subscribed`` / ``phone_not_registered``)
+            instead of losing the whole connection.
+        """
+        body = {"code": code, "waba_id": waba_id, "phone_number_id": phone_number_id}
+        return self._request(
+            "POST", "/official/embedded-signup", body=body, idempotency_key=idempotency_key
+        )
+
+    def get_official_status(self) -> JSONDict:
+        """What is ready and what is missing, checked live against Meta. ``GET /official/status``
+
+        ``can_send`` is the only question that matters. ``live`` false means Meta
+        could not be reached and the values are the last known ones — the
+        difference between "this is how it is" and "we could not check".
+        """
+        return self._request("GET", "/official/status")
+
+    # -- official numbers ------------------------------------------------------
+
+    def upload_official_media(
+        self,
+        file: FileInput,
+        filename: Optional[str] = None,
+        content_type: Optional[str] = None,
+        *,
+        instance_id: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
+    ) -> JSONDict:
+        """Upload a file to Meta once and reuse it as ``media.id``. ``POST /official/media``
+
+        Goes through the default number (or ``instance_id``); the id is valid for
+        30 days and only for sends from that same number — the same image for a
+        whole campaign without uploading it per message.
+        """
+        content, name, ctype = _http.read_file(file, filename, content_type)
+        encoded = _http.encode_multipart(None, "file", content, name, ctype)
+        return self._request(
+            "POST", "/official/media", params={"instance_id": instance_id},
+            multipart=encoded, idempotency_key=idempotency_key,
+        )
+
+    def get_official_media(self, media_id: str, instance_id: Optional[str] = None) -> JSONDict:
+        """Check that a media id is still valid (404 ``media_not_found`` once expired).
+
+        ``GET /official/media/{media_id}``
+        """
+        return self._request(
+            "GET", f"/official/media/{self._seg(media_id, 'media_id')}", params={"instance_id": instance_id}
+        )
+
+    def delete_official_media(self, media_id: str, instance_id: Optional[str] = None) -> None:
+        """Delete a stored file from Meta before it expires. ``DELETE /official/media/{media_id}``"""
+        self._request(
+            "DELETE", f"/official/media/{self._seg(media_id, 'media_id')}", params={"instance_id": instance_id}
+        )
+
+    def list_meta_webhook_events(self, limit: Optional[int] = None, before: Optional[int] = None) -> JSONDict:
+        """Raw events Meta sent for the project's accounts, newest first. ``GET /official/webhook-events``
+
+        The "Meta → bZapper" side of webhooks, with how each event was processed
+        (``pending``, ``running``, ``done`` or ``failed``). Pass the last ``id`` as
+        ``before`` to page back.
+        """
+        return self._request("GET", "/official/webhook-events", params={"limit": limit, "before": before})
+
+    def list_official_numbers(self) -> JSONDict:
+        """List the numbers connected to the project. ``GET /official/numbers``
+
+        Meta allows several numbers on one business account. Each has an
+        ``instance_id`` — the same value you pass as ``instance_id`` in a send to
+        choose which number it goes out from, exactly as on the unofficial rail.
+        The one flagged ``is_default`` sends when a request does not pick one.
+
+        Returns:
+            ``{"numbers": [...]}``, default first.
+        """
+        return self._request("GET", "/official/numbers")
+
+    def list_available_official_numbers(self) -> JSONDict:
+        """Numbers of the business account not connected here yet. ``GET /official/numbers/available``
+
+        What feeds "add a number": the numbers the WABA holds on Meta, minus the
+        ones already connected — without opening Meta's dashboard.
+
+        Returns:
+            ``{"numbers": [...]}`` (``id`` is what :meth:`add_official_number` takes).
+        """
+        return self._request("GET", "/official/numbers/available")
+
+    def add_official_number(
+        self, phone_number_id: str, *, idempotency_key: Optional[str] = None
+    ) -> JSONDict:
+        """Connect one more number from the same business account. ``POST /official/numbers``
+
+        Reuses the authorization already stored (it belongs to the account, not
+        the number). The number is checked against Meta before it is saved, so a
+        wrong id fails here and not on the first send.
+
+        Args:
+            phone_number_id: Meta's id of the number (``id`` from
+                :meth:`list_available_official_numbers`).
+        """
+        return self._request(
+            "POST",
+            "/official/numbers",
+            body={"phone_number_id": phone_number_id},
+            idempotency_key=idempotency_key,
+        )
+
+    def set_default_official_number(
+        self, number_id: str, *, idempotency_key: Optional[str] = None
+    ) -> None:
+        """Choose the number that sends when a request does not pick one. ``PUT /official/numbers/{id}/default``"""
+        return self._request(
+            "PUT",
+            f"/official/numbers/{self._seg(number_id, 'number_id')}/default",
+            idempotency_key=idempotency_key,
+        )
+
+    def disconnect_official_number(
+        self, number_id: str, *, idempotency_key: Optional[str] = None
+    ) -> None:
+        """Disconnect one number; the conversation history stays. ``DELETE /official/numbers/{id}``
+
+        Removing the default promotes the oldest remaining number, so the
+        project never ends up with numbers and no default.
+        """
+        return self._request(
+            "DELETE",
+            f"/official/numbers/{self._seg(number_id, 'number_id')}",
+            idempotency_key=idempotency_key,
+        )
+
+    # -- official business profile ---------------------------------------------
+
+    @staticmethod
+    def _business_profile(
+        about: Optional[str],
+        description: Optional[str],
+        address: Optional[str],
+        email: Optional[str],
+        vertical: Optional[str],
+        websites: Optional[Sequence[str]],
+    ) -> JSONDict:
+        return {
+            "about": about,
+            "description": description,
+            "address": address,
+            "email": email,
+            "vertical": vertical,
+            "websites": list(websites) if websites is not None else None,
+        }
+
+    def get_official_profile(self) -> JSONDict:
+        """Business profile of the project's default number. ``GET /official/profile``
+
+        What the end customer sees when opening the chat: ``about``,
+        ``description``, ``address``, ``email``, ``vertical``, up to two
+        ``websites`` and ``profile_picture_url``. It lives on the NUMBER — with
+        several numbers, use :meth:`get_official_number_profile`.
+        """
+        return self._request("GET", "/official/profile")
+
+    def update_official_profile(
+        self,
+        *,
+        about: Optional[str] = None,
+        description: Optional[str] = None,
+        address: Optional[str] = None,
+        email: Optional[str] = None,
+        vertical: Optional[str] = None,
+        websites: Optional[Sequence[str]] = None,
+        idempotency_key: Optional[str] = None,
+    ) -> JSONDict:
+        """Update the business profile of the default number. ``PUT /official/profile``
+
+        Send the WHOLE profile: an empty field is not "unchanged", it clears that
+        field on Meta. Read it first with :meth:`get_official_profile` and send it
+        back with your edits. Validated against Meta's limits before sending
+        (``about`` 139 chars, ``description`` 512, ``address`` 256, at most 2
+        ``websites``, a closed list of ``vertical``) — a refusal (422) names the
+        field and by how much it overflowed.
+
+        Returns:
+            The profile as saved (normalized as sent to Meta).
+        """
+        body = self._business_profile(about, description, address, email, vertical, websites)
+        return self._request("PUT", "/official/profile", body=body, idempotency_key=idempotency_key)
+
+    def upload_official_profile_photo(
+        self,
+        file: FileInput,
+        filename: Optional[str] = None,
+        content_type: Optional[str] = None,
+        *,
+        idempotency_key: Optional[str] = None,
+    ) -> Optional[JSONDict]:
+        """Replace the profile photo of the default number (multipart). ``POST /official/profile/photo``
+
+        JPEG/PNG up to 5 MB (Meta recommends 640x640). WhatsApp Business has only
+        the round profile photo — there is no cover image.
+
+        Args:
+            file: Raw bytes, a path on disk or a binary file object.
+            filename: File name of the part (default: basename or ``"file"``).
+            content_type: MIME type (default: guessed from the file name).
+
+        Returns:
+            The profile read back (new ``profile_picture_url``), or ``None`` when
+            the photo was saved but the profile could not be read back yet (204).
+        """
+        return self._upload(
+            "/official/profile/photo", file, filename, content_type, None, idempotency_key
+        )
+
+    def reregister_official_profile(self, *, idempotency_key: Optional[str] = None) -> None:
+        """Re-register the default number on the Cloud API. ``POST /official/profile/reregister``
+
+        The step people forget after Meta approves a new display name: until the
+        number is re-registered it keeps showing the old name. Already registered
+        counts as success.
+        """
+        return self._request(
+            "POST", "/official/profile/reregister", idempotency_key=idempotency_key
+        )
+
+    def get_official_number_profile(self, number_id: str) -> JSONDict:
+        """Business profile of one connected number. ``GET /official/numbers/{id}/profile``
+
+        Args:
+            number_id: Connected number id (``id`` from :meth:`list_official_numbers`).
+        """
+        return self._request(
+            "GET", f"/official/numbers/{self._seg(number_id, 'number_id')}/profile"
+        )
+
+    def update_official_number_profile(
+        self,
+        number_id: str,
+        *,
+        about: Optional[str] = None,
+        description: Optional[str] = None,
+        address: Optional[str] = None,
+        email: Optional[str] = None,
+        vertical: Optional[str] = None,
+        websites: Optional[Sequence[str]] = None,
+        idempotency_key: Optional[str] = None,
+    ) -> JSONDict:
+        """Update the business profile of one number. ``PUT /official/numbers/{id}/profile``
+
+        Same rules as :meth:`update_official_profile`: send the WHOLE profile —
+        an empty field clears it on Meta.
+        """
+        body = self._business_profile(about, description, address, email, vertical, websites)
+        return self._request(
+            "PUT",
+            f"/official/numbers/{self._seg(number_id, 'number_id')}/profile",
+            body=body,
+            idempotency_key=idempotency_key,
+        )
+
+    def upload_official_number_profile_photo(
+        self,
+        number_id: str,
+        file: FileInput,
+        filename: Optional[str] = None,
+        content_type: Optional[str] = None,
+        *,
+        idempotency_key: Optional[str] = None,
+    ) -> Optional[JSONDict]:
+        """Replace the profile photo of one number (multipart). ``POST /official/numbers/{id}/profile/photo``
+
+        Same as :meth:`upload_official_profile_photo` (JPEG/PNG up to 5 MB),
+        for the number given.
+        """
+        return self._upload(
+            f"/official/numbers/{self._seg(number_id, 'number_id')}/profile/photo",
+            file,
+            filename,
+            content_type,
+            None,
+            idempotency_key,
+        )
+
+    def reregister_official_number_profile(
+        self, number_id: str, *, idempotency_key: Optional[str] = None
+    ) -> None:
+        """Re-register one number on the Cloud API. ``POST /official/numbers/{id}/profile/reregister``
+
+        See :meth:`reregister_official_profile`.
+        """
+        return self._request(
+            "POST",
+            f"/official/numbers/{self._seg(number_id, 'number_id')}/profile/reregister",
+            idempotency_key=idempotency_key,
+        )
+
+    # -- templates (official rail) ---------------------------------------------
+
+    def send_template(
+        self,
+        to: str,
+        template: str,
+        *,
+        language: Optional[str] = None,
+        variables: Optional[Sequence[str]] = None,
+        header_variables: Optional[Sequence[str]] = None,
+        button_variables: Optional[Sequence[str]] = None,
+        code: Optional[str] = None,
+        instance_id: Optional[str] = None,
+        pool_id: Optional[str] = None,
+        quoted_message_id: Optional[str] = None,
+        client_reference: Optional[str] = None,
+        mentions: Optional[Sequence[str]] = None,
+        sticky: Optional[bool] = None,
+        scheduled_at: Optional[str] = None,
+        quoted_participant: Optional[str] = None,
+        idempotency_key: Optional[str] = None,
+        groups: Optional[Sequence[str]] = None,
+        tags: Optional[Sequence[str]] = None,
+        force: Optional[bool] = None,
+    ) -> JSONDict:
+        """Send an approved template by name. ``POST /messages/template``
+
+        OFFICIAL RAIL ONLY (on the unofficial rail the API answers 409). This is
+        the only way to start a conversation outside the 24-hour service window.
+        You pass the template NAME; the id Meta assigned to it never appears here.
+
+        Args:
+            to: Destination phone in E.164 (``+5511...``) or a JID.
+            template: The template name.
+            language: e.g. ``pt_BR``. May be omitted when the name exists in a
+                single language; in more than one the API answers 409
+                ``template_ambiguous`` instead of guessing.
+            variables: Body values, in order (``{{1}}``, ``{{2}}``…). The count
+                must match the approved template exactly — a mismatch is the
+                number one cause of Meta error 132000, and the API checks it
+                (422) before spending the call.
+            header_variables: Value for the header variable, when there is one.
+            button_variables: Values for dynamic URL buttons, by button index.
+            code: AUTHENTICATION templates only. Meta requires the code both in
+                the body and in the copy-code button; the API places it in both.
+
+        Returns:
+            The queued-message object (same as :meth:`send_text`).
+        """
+        payload = self._send_base(
+            to,
+            instance_id=instance_id,
+            pool_id=pool_id,
+            quoted_message_id=quoted_message_id,
+            client_reference=client_reference,
+            mentions=mentions,
+            sticky=sticky,
+            scheduled_at=scheduled_at,
+            quoted_participant=quoted_participant,
+            groups=groups,
+            tags=tags,
+            force=force,
+        )
+        payload["template"] = template
+        payload["language"] = language
+        payload["variables"] = list(variables) if variables is not None else None
+        payload["header_variables"] = (
+            list(header_variables) if header_variables is not None else None
+        )
+        payload["button_variables"] = (
+            list(button_variables) if button_variables is not None else None
+        )
+        payload["code"] = code
+        return self._request(
+            "POST",
+            "/messages/template",
+            body=payload,
+            headers=self._idempotency_headers(idempotency_key),
+        )
+
+    def list_templates(self) -> JSONDict:
+        """List the project templates, newest first. ``GET /templates``
+
+        Each item carries ``status`` (``PENDING``/``APPROVED``/``REJECTED``/
+        ``PAUSED``/``DISABLED``) and ``variables`` — how many values the body
+        expects, and therefore how many you must pass when sending.
+
+        Returns:
+            ``{"templates": [...]}``.
+        """
+        return self._request("GET", "/templates")
+
+    def create_template(
+        self,
+        name: str,
+        language: str,
+        category: str,
+        body: Mapping[str, Any],
+        *,
+        header: Optional[Mapping[str, Any]] = None,
+        footer: Optional[str] = None,
+        buttons: Optional[Sequence[Mapping[str, Any]]] = None,
+        code_expiry_minutes: Optional[int] = None,
+        idempotency_key: Optional[str] = None,
+    ) -> JSONDict:
+        """Create a template and submit it to Meta for review. ``POST /templates``
+
+        You describe header, body, footer and buttons; the API builds the
+        component format Meta expects. Validation happens BEFORE submission:
+        Meta takes up to 24 hours to answer, rejects with a terse reason and caps
+        how many templates you may submit. A variable at the start or end of the
+        body, numbering that skips, two variables side by side, a missing example
+        — each comes back as 422 with a message that says what to fix. The
+        decision arrives later through the ``template.approved`` /
+        ``template.rejected`` webhooks.
+
+        Args:
+            name: Lowercase letters, numbers and ``_``. This is the name you send by.
+            language: e.g. ``pt_BR`` (``pt-BR`` is accepted too).
+            category: ``MARKETING``, ``UTILITY`` or ``AUTHENTICATION``. It decides
+                what the conversation COSTS and what Meta accepts in the content.
+            body: ``{"text": ..., "example": [...]}``. Use ``{{1}}``, ``{{2}}``…
+                for the values that change, and give one example per variable.
+            header: ``{"type": "text"|"image"|"video"|"document", "text"?,
+                "example"?, "media_url"?}`` (``media_url`` from
+                :meth:`upload_template_media`).
+            footer: Up to 60 characters, no variables.
+            buttons: Up to 10, each ``{"type": "quick_reply"|"url"|"phone_number",
+                "text": ..., "url"?, "phone"?, "example"?}``.
+            code_expiry_minutes: ``AUTHENTICATION`` only (1–90). In that category
+                Meta writes the text and adds the copy-code button.
+
+        Returns:
+            ``{"template": ..., "advice": [...]}``. ``advice`` lists things that did
+            NOT block the submission but change the outcome — promotional wording
+            in a ``UTILITY`` template, for instance, which Meta reclassifies on its
+            own, and reclassification changes the price.
+        """
+        spec = {
+            "name": name,
+            "language": language,
+            "category": category,
+            "body": dict(body),
+            "header": dict(header) if header is not None else None,
+            "footer": footer,
+            "buttons": [dict(b) for b in buttons] if buttons is not None else None,
+            "code_expiry_minutes": code_expiry_minutes,
+        }
+        return self._request("POST", "/templates", body=spec, idempotency_key=idempotency_key)
+
+    def get_template(self, template_id: str) -> JSONDict:
+        """Get one template. ``GET /templates/{id}``"""
+        return self._request("GET", f"/templates/{self._seg(template_id, 'template_id')}")
+
+    def delete_template(self, template_id: str, *, idempotency_key: Optional[str] = None) -> None:
+        """Delete a template here and at Meta. ``DELETE /templates/{id}``
+
+        Meta deletes ALL languages of a name at once — so while another language
+        of the same name is still registered here, Meta is left alone.
+        """
+        return self._request(
+            "DELETE",
+            f"/templates/{self._seg(template_id, 'template_id')}",
+            idempotency_key=idempotency_key,
+        )
+
+    def sync_templates(self, *, idempotency_key: Optional[str] = None) -> JSONDict:
+        """Import templates that exist at Meta and not here. ``POST /templates/sync``
+
+        For the account that used the Cloud API before bZapper and created
+        templates in WhatsApp Manager, and to repair a webhook that never
+        arrived. Returns ``{"imported": n}``.
+        """
+        return self._request("POST", "/templates/sync", idempotency_key=idempotency_key)
+
+    def upload_template_media(
+        self,
+        file: FileInput,
+        filename: Optional[str] = None,
+        content_type: Optional[str] = None,
+        *,
+        idempotency_key: Optional[str] = None,
+    ) -> JSONDict:
+        """Upload the header sample of a template (multipart). ``POST /templates/media``
+
+        JPEG/PNG/MP4/PDF up to 10 MB. Meta reviews media headers from a sample
+        file: pass the returned ``url`` as ``header["media_url"]`` in
+        :meth:`create_template` — no need to host the file anywhere. It is only
+        the sample Meta reviews, not the media that goes out on each send.
+
+        Args:
+            file: Raw bytes, a path on disk or a binary file object.
+            filename: File name of the part (default: basename or ``"file"``).
+            content_type: MIME type (default: guessed from the file name).
+
+        Returns:
+            ``{"url"}``.
+        """
+        return self._upload("/templates/media", file, filename, content_type, None, idempotency_key)
+
+    def get_fallback_template(self) -> JSONDict:
+        """The template sent when the 24-hour window is closed. ``GET /templates/fallback``
+
+        ``{"template": None}`` when none is set.
+        """
+        return self._request("GET", "/templates/fallback")
+
+    def set_fallback_template(
+        self, template_id: Optional[str], *, idempotency_key: Optional[str] = None
+    ) -> None:
+        """Set the template sent when the 24-hour window is closed. ``PUT /templates/fallback``
+
+        This is what makes the same :meth:`send_text` work inside and outside the
+        window: when the contact has not written for over 24 hours, the platform
+        sends this approved template instead and reports the detour in the
+        ``delivery`` field of the send result. Only an APPROVED template is
+        accepted (409 otherwise). ``None`` (or ``""``) clears it.
+        """
+        return self._request(
+            "PUT",
+            "/templates/fallback",
+            body={"template_id": template_id or ""},
+            idempotency_key=idempotency_key,
+        )
 
     # -- API keys --------------------------------------------------------------
 
@@ -1627,6 +2212,20 @@ class Client:
         path = f"/me/connections/{self._seg(connection_id, 'connection_id')}"
         return self._request("DELETE", path, idempotency_key=idempotency_key)
 
+    def convert_connected_app_to_standalone(
+        self, connection_id: str, *, idempotency_key: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Convert a partner-created account to general use (admin).
+
+        ``POST /me/connections/{id}/standalone``
+
+        The connection STAYS: the partner keeps working and any partnership
+        discount keeps applying — what changes is that the account may now issue
+        its own API keys. Irreversible.
+        """
+        path = f"/me/connections/{self._seg(connection_id, 'connection_id')}/standalone"
+        return self._request("POST", path, idempotency_key=idempotency_key)
+
     # -- webhooks (management; to RECEIVE+process events use bzapper.webhooks) --
 
     def list_webhooks(self) -> JSONDict:
@@ -1706,6 +2305,16 @@ class Client:
     def webhook_deliveries(self, webhook_id: str, *, limit: Optional[int] = None) -> JSONDict:
         """Recent delivery attempts for a webhook. ``GET /webhooks/{id}/deliveries``"""
         return self._request("GET", f"/webhooks/{self._seg(webhook_id, 'webhook_id')}/deliveries", params={"limit": limit})
+
+    def redeliver_webhook_delivery(self, webhook_id: str, delivery_id: str) -> JSONDict:
+        """Redeliver a FAILED delivery (same body and event_id, signed with the current secret).
+
+        Only failures from the last 7 days. ``POST /webhooks/{id}/deliveries/{delivery_id}/redeliver``
+        """
+        return self._request(
+            "POST",
+            f"/webhooks/{self._seg(webhook_id, 'webhook_id')}/deliveries/{self._seg(delivery_id, 'delivery_id')}/redeliver",
+        )
 
     def trigger_webhook_event(
         self, event_type: Optional[str] = None, *, idempotency_key: Optional[str] = None

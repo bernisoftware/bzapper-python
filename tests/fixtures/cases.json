@@ -4594,12 +4594,16 @@
             "body": {
               "data": [
                 {
+                  "avatar_url": "avatar_url-1",
                   "chat_jid": "5511999990000@s.whatsapp.net",
                   "last_at": "2026-09-21T12:00:00Z",
                   "last_body": "last_body-1",
                   "last_direction": "in",
+                  "last_inbound_at": "2026-09-21T12:00:00Z",
+                  "last_instance_id": "00000000-0000-4000-8000-000000000001",
                   "last_status": "last_status-1",
                   "last_type": "last_type-1",
+                  "name": "name-1",
                   "unread": 1
                 }
               ]
@@ -4614,12 +4618,16 @@
         "result": {
           "data": [
             {
+              "avatar_url": "avatar_url-1",
               "chat_jid": "5511999990000@s.whatsapp.net",
               "last_at": "2026-09-21T12:00:00Z",
               "last_body": "last_body-1",
               "last_direction": "in",
+              "last_inbound_at": "2026-09-21T12:00:00Z",
+              "last_instance_id": "00000000-0000-4000-8000-000000000001",
               "last_status": "last_status-1",
               "last_type": "last_type-1",
+              "name": "name-1",
               "unread": 1
             }
           ]
@@ -5435,6 +5443,7 @@
                   "phone": "+5511999999999",
                   "project_id": "00000000-0000-4000-8000-000000000001",
                   "proxy_url": "proxy_url-1",
+                  "rail": "unofficial",
                   "status": "qr_pending",
                   "status_reason": "",
                   "tenant_id": "00000000-0000-4000-8000-000000000001",
@@ -5467,6 +5476,7 @@
               "phone": "+5511999999999",
               "project_id": "00000000-0000-4000-8000-000000000001",
               "proxy_url": "proxy_url-1",
+              "rail": "unofficial",
               "status": "qr_pending",
               "status_reason": "",
               "tenant_id": "00000000-0000-4000-8000-000000000001",
@@ -5518,6 +5528,7 @@
               "phone": "+5511999999999",
               "project_id": "00000000-0000-4000-8000-000000000001",
               "proxy_url": "proxy_url-1",
+              "rail": "unofficial",
               "status": "qr_pending",
               "status_reason": "",
               "tenant_id": "00000000-0000-4000-8000-000000000001",
@@ -5546,6 +5557,7 @@
           "phone": "+5511999999999",
           "project_id": "00000000-0000-4000-8000-000000000001",
           "proxy_url": "proxy_url-1",
+          "rail": "unofficial",
           "status": "qr_pending",
           "status_reason": "",
           "tenant_id": "00000000-0000-4000-8000-000000000001",
@@ -5589,6 +5601,7 @@
               "phone": "+5511999999999",
               "project_id": "00000000-0000-4000-8000-000000000001",
               "proxy_url": "proxy_url-1",
+              "rail": "unofficial",
               "status": "qr_pending",
               "status_reason": "",
               "tenant_id": "00000000-0000-4000-8000-000000000001",
@@ -5617,6 +5630,7 @@
           "phone": "+5511999999999",
           "project_id": "00000000-0000-4000-8000-000000000001",
           "proxy_url": "proxy_url-1",
+          "rail": "unofficial",
           "status": "qr_pending",
           "status_reason": "",
           "tenant_id": "00000000-0000-4000-8000-000000000001",
@@ -5859,159 +5873,6 @@
     },
     {
       "args": {
-        "body": null,
-        "path": {},
-        "query": {}
-      },
-      "exchanges": [
-        {
-          "request": {
-            "body": null,
-            "method": "GET",
-            "path": "/official/account",
-            "query": {}
-          },
-          "response": {
-            "body": {
-              "display_number": "display_number-1",
-              "id": "00000000-0000-4000-8000-000000000001",
-              "messaging_limit": "messaging_limit-1",
-              "phone_number_id": "00000000-0000-4000-8000-000000000001",
-              "project_id": "00000000-0000-4000-8000-000000000001",
-              "quality_rating": "quality_rating-1",
-              "source": "embedded_signup",
-              "status": "PENDENTE",
-              "status_reason": "status_reason-1",
-              "tenant_id": "00000000-0000-4000-8000-000000000001",
-              "verified_name": "verified_name-1",
-              "waba_id": "00000000-0000-4000-8000-000000000001"
-            },
-            "headers": {},
-            "status": 200
-          },
-          "retry": false
-        }
-      ],
-      "expect": {
-        "result": {
-          "display_number": "display_number-1",
-          "id": "00000000-0000-4000-8000-000000000001",
-          "messaging_limit": "messaging_limit-1",
-          "phone_number_id": "00000000-0000-4000-8000-000000000001",
-          "project_id": "00000000-0000-4000-8000-000000000001",
-          "quality_rating": "quality_rating-1",
-          "source": "embedded_signup",
-          "status": "PENDENTE",
-          "status_reason": "status_reason-1",
-          "tenant_id": "00000000-0000-4000-8000-000000000001",
-          "verified_name": "verified_name-1",
-          "waba_id": "00000000-0000-4000-8000-000000000001"
-        }
-      },
-      "id": "getOfficialAccount/basic",
-      "multipart": false,
-      "op": "getOfficialAccount"
-    },
-    {
-      "args": {
-        "body": {
-          "access_token": "access_token-1",
-          "display_number": "display_number-1",
-          "phone_number_id": "00000000-0000-4000-8000-000000000001",
-          "status": "PENDENTE",
-          "verified_name": "verified_name-1",
-          "waba_id": "00000000-0000-4000-8000-000000000001"
-        },
-        "path": {},
-        "query": {}
-      },
-      "exchanges": [
-        {
-          "request": {
-            "body": {
-              "access_token": "access_token-1",
-              "display_number": "display_number-1",
-              "phone_number_id": "00000000-0000-4000-8000-000000000001",
-              "status": "PENDENTE",
-              "verified_name": "verified_name-1",
-              "waba_id": "00000000-0000-4000-8000-000000000001"
-            },
-            "method": "POST",
-            "path": "/official/account",
-            "query": {}
-          },
-          "response": {
-            "body": {
-              "display_number": "display_number-1",
-              "id": "00000000-0000-4000-8000-000000000001",
-              "messaging_limit": "messaging_limit-1",
-              "phone_number_id": "00000000-0000-4000-8000-000000000001",
-              "project_id": "00000000-0000-4000-8000-000000000001",
-              "quality_rating": "quality_rating-1",
-              "source": "embedded_signup",
-              "status": "PENDENTE",
-              "status_reason": "status_reason-1",
-              "tenant_id": "00000000-0000-4000-8000-000000000001",
-              "verified_name": "verified_name-1",
-              "waba_id": "00000000-0000-4000-8000-000000000001"
-            },
-            "headers": {},
-            "status": 200
-          },
-          "retry": false
-        }
-      ],
-      "expect": {
-        "result": {
-          "display_number": "display_number-1",
-          "id": "00000000-0000-4000-8000-000000000001",
-          "messaging_limit": "messaging_limit-1",
-          "phone_number_id": "00000000-0000-4000-8000-000000000001",
-          "project_id": "00000000-0000-4000-8000-000000000001",
-          "quality_rating": "quality_rating-1",
-          "source": "embedded_signup",
-          "status": "PENDENTE",
-          "status_reason": "status_reason-1",
-          "tenant_id": "00000000-0000-4000-8000-000000000001",
-          "verified_name": "verified_name-1",
-          "waba_id": "00000000-0000-4000-8000-000000000001"
-        }
-      },
-      "id": "connectOfficialAccount/basic",
-      "multipart": false,
-      "op": "connectOfficialAccount"
-    },
-    {
-      "args": {
-        "body": null,
-        "path": {},
-        "query": {}
-      },
-      "exchanges": [
-        {
-          "request": {
-            "body": null,
-            "method": "DELETE",
-            "path": "/official/account",
-            "query": {}
-          },
-          "response": {
-            "body": null,
-            "headers": {},
-            "status": 204
-          },
-          "retry": false
-        }
-      ],
-      "expect": {
-        "result": null
-      },
-      "id": "disconnectOfficialAccount/basic",
-      "multipart": false,
-      "op": "disconnectOfficialAccount"
-    },
-    {
-      "args": {
         "body": {
           "proxy_url": "proxy_url-1"
         },
@@ -6102,6 +5963,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6116,6 +5982,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6138,6 +6009,7 @@
           "media": {
             "caption": "caption-1",
             "filename": "filename-1",
+            "id": "00000000-0000-4000-8000-000000000001",
             "mimetype": "mimetype-1",
             "ptt": true,
             "url": "url-1"
@@ -6171,6 +6043,7 @@
               "media": {
                 "caption": "caption-1",
                 "filename": "filename-1",
+                "id": "00000000-0000-4000-8000-000000000001",
                 "mimetype": "mimetype-1",
                 "ptt": true,
                 "url": "url-1"
@@ -6195,6 +6068,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6209,6 +6087,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6231,6 +6114,7 @@
           "media": {
             "caption": "caption-1",
             "filename": "filename-1",
+            "id": "00000000-0000-4000-8000-000000000001",
             "mimetype": "mimetype-1",
             "ptt": true,
             "url": "url-1"
@@ -6264,6 +6148,7 @@
               "media": {
                 "caption": "caption-1",
                 "filename": "filename-1",
+                "id": "00000000-0000-4000-8000-000000000001",
                 "mimetype": "mimetype-1",
                 "ptt": true,
                 "url": "url-1"
@@ -6288,6 +6173,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6302,6 +6192,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6324,6 +6219,7 @@
           "media": {
             "caption": "caption-1",
             "filename": "filename-1",
+            "id": "00000000-0000-4000-8000-000000000001",
             "mimetype": "mimetype-1",
             "ptt": true,
             "url": "url-1"
@@ -6357,6 +6253,7 @@
               "media": {
                 "caption": "caption-1",
                 "filename": "filename-1",
+                "id": "00000000-0000-4000-8000-000000000001",
                 "mimetype": "mimetype-1",
                 "ptt": true,
                 "url": "url-1"
@@ -6381,6 +6278,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6395,6 +6297,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6417,6 +6324,7 @@
           "media": {
             "caption": "caption-1",
             "filename": "filename-1",
+            "id": "00000000-0000-4000-8000-000000000001",
             "mimetype": "mimetype-1",
             "ptt": true,
             "url": "url-1"
@@ -6450,6 +6358,7 @@
               "media": {
                 "caption": "caption-1",
                 "filename": "filename-1",
+                "id": "00000000-0000-4000-8000-000000000001",
                 "mimetype": "mimetype-1",
                 "ptt": true,
                 "url": "url-1"
@@ -6474,6 +6383,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6488,6 +6402,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6510,6 +6429,7 @@
           "media": {
             "caption": "caption-1",
             "filename": "filename-1",
+            "id": "00000000-0000-4000-8000-000000000001",
             "mimetype": "mimetype-1",
             "ptt": true,
             "url": "url-1"
@@ -6543,6 +6463,7 @@
               "media": {
                 "caption": "caption-1",
                 "filename": "filename-1",
+                "id": "00000000-0000-4000-8000-000000000001",
                 "mimetype": "mimetype-1",
                 "ptt": true,
                 "url": "url-1"
@@ -6567,6 +6488,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6581,6 +6507,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6654,6 +6585,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6668,6 +6604,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6739,6 +6680,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6753,6 +6699,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6828,6 +6779,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6842,6 +6798,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6909,6 +6870,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -6923,6 +6889,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -7004,6 +6975,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -7018,6 +6994,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -7113,6 +7094,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -7127,6 +7113,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -7198,6 +7189,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -7212,6 +7208,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -7221,6 +7222,119 @@
       "id": "sendOTP/basic",
       "multipart": false,
       "op": "sendOTP"
+    },
+    {
+      "args": {
+        "body": {
+          "button_variables": [
+            "button_variable-1"
+          ],
+          "client_reference": "client_reference-1",
+          "code": "code-1",
+          "force": true,
+          "groups": [
+            "group-1"
+          ],
+          "header_variables": [
+            "header_variable-1"
+          ],
+          "instance_id": "00000000-0000-4000-8000-000000000001",
+          "language": "language-1",
+          "mentions": [
+            "mention-1"
+          ],
+          "pool_id": "00000000-0000-4000-8000-000000000001",
+          "quoted_message_id": "00000000-0000-4000-8000-000000000001",
+          "quoted_participant": "quoted_participant-1",
+          "scheduled_at": "2026-09-21T12:00:00Z",
+          "sticky": true,
+          "tags": [
+            "tag-1"
+          ],
+          "template": "template-1",
+          "to": "+5511999999999",
+          "variables": [
+            "variable-1"
+          ]
+        },
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": {
+              "button_variables": [
+                "button_variable-1"
+              ],
+              "client_reference": "client_reference-1",
+              "code": "code-1",
+              "force": true,
+              "groups": [
+                "group-1"
+              ],
+              "header_variables": [
+                "header_variable-1"
+              ],
+              "instance_id": "00000000-0000-4000-8000-000000000001",
+              "language": "language-1",
+              "mentions": [
+                "mention-1"
+              ],
+              "pool_id": "00000000-0000-4000-8000-000000000001",
+              "quoted_message_id": "00000000-0000-4000-8000-000000000001",
+              "quoted_participant": "quoted_participant-1",
+              "scheduled_at": "2026-09-21T12:00:00Z",
+              "sticky": true,
+              "tags": [
+                "tag-1"
+              ],
+              "template": "template-1",
+              "to": "+5511999999999",
+              "variables": [
+                "variable-1"
+              ]
+            },
+            "method": "POST",
+            "path": "/messages/template",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
+              "message_id": "00000000-0000-4000-8000-000000000001",
+              "scheduled_at": "2026-09-21T12:00:00Z",
+              "scheduled_id": "00000000-0000-4000-8000-000000000001",
+              "status": "queued"
+            },
+            "headers": {},
+            "status": 202
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
+          "message_id": "00000000-0000-4000-8000-000000000001",
+          "scheduled_at": "2026-09-21T12:00:00Z",
+          "scheduled_id": "00000000-0000-4000-8000-000000000001",
+          "status": "queued"
+        }
+      },
+      "id": "sendTemplate/basic",
+      "multipart": false,
+      "op": "sendTemplate"
     },
     {
       "args": {
@@ -7398,6 +7512,17 @@
             {
               "body": "body-1",
               "media": {},
+              "template": {
+                "header_variables": [
+                  "header_variable-1"
+                ],
+                "language": "pt_BR",
+                "name": "promo_outubro",
+                "variables": [
+                  "{nome}",
+                  "OUTUBRO10"
+                ]
+              },
               "weight": 1
             }
           ]
@@ -7417,6 +7542,17 @@
                 {
                   "body": "body-1",
                   "media": {},
+                  "template": {
+                    "header_variables": [
+                      "header_variable-1"
+                    ],
+                    "language": "pt_BR",
+                    "name": "promo_outubro",
+                    "variables": [
+                      "{nome}",
+                      "OUTUBRO10"
+                    ]
+                  },
                   "weight": 1
                 }
               ]
@@ -7673,6 +7809,17 @@
                 {
                   "body": "body-1",
                   "media": {},
+                  "template": {
+                    "header_variables": [
+                      "header_variable-1"
+                    ],
+                    "language": "pt_BR",
+                    "name": "promo_outubro",
+                    "variables": [
+                      "{nome}",
+                      "OUTUBRO10"
+                    ]
+                  },
                   "weight": 1
                 }
               ]
@@ -7714,6 +7861,17 @@
             {
               "body": "body-1",
               "media": {},
+              "template": {
+                "header_variables": [
+                  "header_variable-1"
+                ],
+                "language": "pt_BR",
+                "name": "promo_outubro",
+                "variables": [
+                  "{nome}",
+                  "OUTUBRO10"
+                ]
+              },
               "weight": 1
             }
           ]
@@ -7733,6 +7891,17 @@
             {
               "body": "body-1",
               "media": {},
+              "template": {
+                "header_variables": [
+                  "header_variable-1"
+                ],
+                "language": "pt_BR",
+                "name": "promo_outubro",
+                "variables": [
+                  "{nome}",
+                  "OUTUBRO10"
+                ]
+              },
               "weight": 1
             }
           ]
@@ -7753,6 +7922,17 @@
                 {
                   "body": "body-1",
                   "media": {},
+                  "template": {
+                    "header_variables": [
+                      "header_variable-1"
+                    ],
+                    "language": "pt_BR",
+                    "name": "promo_outubro",
+                    "variables": [
+                      "{nome}",
+                      "OUTUBRO10"
+                    ]
+                  },
                   "weight": 1
                 }
               ]
@@ -8738,6 +8918,52 @@
     },
     {
       "args": {
+        "body": null,
+        "path": {
+          "delivery_id": "delivery_id 1",
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "POST",
+            "path": "/webhooks/00000000-0000-4000-8000-000000000001/deliveries/delivery_id 1/redeliver",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "delivered": true,
+              "delivery_id": "00000000-0000-4000-8000-000000000001",
+              "error": "error-1",
+              "event_id": "00000000-0000-4000-8000-000000000001",
+              "event_type": "event_type-1",
+              "status": 1
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "delivered": true,
+          "delivery_id": "00000000-0000-4000-8000-000000000001",
+          "error": "error-1",
+          "event_id": "00000000-0000-4000-8000-000000000001",
+          "event_type": "event_type-1",
+          "status": 1
+        }
+      },
+      "id": "redeliverWebhookDelivery/basic",
+      "multipart": false,
+      "op": "redeliverWebhookDelivery"
+    },
+    {
+      "args": {
         "body": {
           "event_type": "event_type-1"
         },
@@ -9098,6 +9324,7 @@
                 "partner_name": "partner_name-1",
                 "project_id": "00000000-0000-4000-8000-000000000001",
                 "revoked_at": "2026-09-21T12:00:00Z",
+                "standalone_at": "2026-09-21T12:00:00Z",
                 "status": "pending_account",
                 "suspended_at": "2026-09-21T12:00:00Z",
                 "updated_at": "2026-09-21T12:00:00Z"
@@ -9139,6 +9366,7 @@
             "partner_name": "partner_name-1",
             "project_id": "00000000-0000-4000-8000-000000000001",
             "revoked_at": "2026-09-21T12:00:00Z",
+            "standalone_at": "2026-09-21T12:00:00Z",
             "status": "pending_account",
             "suspended_at": "2026-09-21T12:00:00Z",
             "updated_at": "2026-09-21T12:00:00Z"
@@ -9197,6 +9425,7 @@
               "partner_name": "partner_name-1",
               "project_id": "00000000-0000-4000-8000-000000000001",
               "revoked_at": "2026-09-21T12:00:00Z",
+              "standalone_at": "2026-09-21T12:00:00Z",
               "status": "pending_account",
               "suspended_at": "2026-09-21T12:00:00Z",
               "updated_at": "2026-09-21T12:00:00Z"
@@ -9235,6 +9464,7 @@
           "partner_name": "partner_name-1",
           "project_id": "00000000-0000-4000-8000-000000000001",
           "revoked_at": "2026-09-21T12:00:00Z",
+          "standalone_at": "2026-09-21T12:00:00Z",
           "status": "pending_account",
           "suspended_at": "2026-09-21T12:00:00Z",
           "updated_at": "2026-09-21T12:00:00Z"
@@ -9293,6 +9523,7 @@
                   "partner_name": "partner_name-1",
                   "project_id": "00000000-0000-4000-8000-000000000001",
                   "revoked_at": "2026-09-21T12:00:00Z",
+                  "standalone_at": "2026-09-21T12:00:00Z",
                   "status": "pending_account",
                   "suspended_at": "2026-09-21T12:00:00Z",
                   "updated_at": "2026-09-21T12:00:00Z"
@@ -9334,6 +9565,7 @@
               "partner_name": "partner_name-1",
               "project_id": "00000000-0000-4000-8000-000000000001",
               "revoked_at": "2026-09-21T12:00:00Z",
+              "standalone_at": "2026-09-21T12:00:00Z",
               "status": "pending_account",
               "suspended_at": "2026-09-21T12:00:00Z",
               "updated_at": "2026-09-21T12:00:00Z"
@@ -9388,6 +9620,7 @@
               "partner_name": "partner_name-1",
               "project_id": "00000000-0000-4000-8000-000000000001",
               "revoked_at": "2026-09-21T12:00:00Z",
+              "standalone_at": "2026-09-21T12:00:00Z",
               "status": "pending_account",
               "suspended_at": "2026-09-21T12:00:00Z",
               "updated_at": "2026-09-21T12:00:00Z"
@@ -9425,6 +9658,7 @@
           "partner_name": "partner_name-1",
           "project_id": "00000000-0000-4000-8000-000000000001",
           "revoked_at": "2026-09-21T12:00:00Z",
+          "standalone_at": "2026-09-21T12:00:00Z",
           "status": "pending_account",
           "suspended_at": "2026-09-21T12:00:00Z",
           "updated_at": "2026-09-21T12:00:00Z"
@@ -9509,6 +9743,7 @@
               "partner_name": "partner_name-1",
               "project_id": "00000000-0000-4000-8000-000000000001",
               "revoked_at": "2026-09-21T12:00:00Z",
+              "standalone_at": "2026-09-21T12:00:00Z",
               "status": "pending_account",
               "suspended_at": "2026-09-21T12:00:00Z",
               "updated_at": "2026-09-21T12:00:00Z"
@@ -9547,6 +9782,7 @@
           "partner_name": "partner_name-1",
           "project_id": "00000000-0000-4000-8000-000000000001",
           "revoked_at": "2026-09-21T12:00:00Z",
+          "standalone_at": "2026-09-21T12:00:00Z",
           "status": "pending_account",
           "suspended_at": "2026-09-21T12:00:00Z",
           "updated_at": "2026-09-21T12:00:00Z"
@@ -9599,6 +9835,7 @@
                   "partner_name": "partner_name-1",
                   "project_id": "00000000-0000-4000-8000-000000000001",
                   "revoked_at": "2026-09-21T12:00:00Z",
+                  "standalone_at": "2026-09-21T12:00:00Z",
                   "status": "pending_account",
                   "suspended_at": "2026-09-21T12:00:00Z",
                   "updated_at": "2026-09-21T12:00:00Z"
@@ -9640,6 +9877,7 @@
               "partner_name": "partner_name-1",
               "project_id": "00000000-0000-4000-8000-000000000001",
               "revoked_at": "2026-09-21T12:00:00Z",
+              "standalone_at": "2026-09-21T12:00:00Z",
               "status": "pending_account",
               "suspended_at": "2026-09-21T12:00:00Z",
               "updated_at": "2026-09-21T12:00:00Z"
@@ -9681,6 +9919,1914 @@
       "id": "revokeConnectedApp/basic",
       "multipart": false,
       "op": "revokeConnectedApp"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "POST",
+            "path": "/me/connections/00000000-0000-4000-8000-000000000001/standalone",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "account_id": "00000000-0000-4000-8000-000000000001",
+              "activated_at": "2026-09-21T12:00:00Z",
+              "created_at": "2026-09-21T12:00:00Z",
+              "customer": {
+                "company": "Boxy Pharma",
+                "country": "BR",
+                "email": "ana@example.com",
+                "locale": "pt-BR",
+                "name": "Ana Souza",
+                "phone": "+5511988887777"
+              },
+              "external_id": "00000000-0000-4000-8000-000000000001",
+              "id": "00000000-0000-4000-8000-000000000001",
+              "numbers": [
+                {
+                  "id": "00000000-0000-4000-8000-000000000001",
+                  "phone": "5511999990000",
+                  "status": "status-1"
+                }
+              ],
+              "partner_id": "00000000-0000-4000-8000-000000000001",
+              "partner_logo_url": "partner_logo_url-1",
+              "partner_name": "partner_name-1",
+              "project_id": "00000000-0000-4000-8000-000000000001",
+              "revoked_at": "2026-09-21T12:00:00Z",
+              "standalone_at": "2026-09-21T12:00:00Z",
+              "status": "pending_account",
+              "suspended_at": "2026-09-21T12:00:00Z",
+              "updated_at": "2026-09-21T12:00:00Z"
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "account_id": "00000000-0000-4000-8000-000000000001",
+          "activated_at": "2026-09-21T12:00:00Z",
+          "created_at": "2026-09-21T12:00:00Z",
+          "customer": {
+            "company": "Boxy Pharma",
+            "country": "BR",
+            "email": "ana@example.com",
+            "locale": "pt-BR",
+            "name": "Ana Souza",
+            "phone": "+5511988887777"
+          },
+          "external_id": "00000000-0000-4000-8000-000000000001",
+          "id": "00000000-0000-4000-8000-000000000001",
+          "numbers": [
+            {
+              "id": "00000000-0000-4000-8000-000000000001",
+              "phone": "5511999990000",
+              "status": "status-1"
+            }
+          ],
+          "partner_id": "00000000-0000-4000-8000-000000000001",
+          "partner_logo_url": "partner_logo_url-1",
+          "partner_name": "partner_name-1",
+          "project_id": "00000000-0000-4000-8000-000000000001",
+          "revoked_at": "2026-09-21T12:00:00Z",
+          "standalone_at": "2026-09-21T12:00:00Z",
+          "status": "pending_account",
+          "suspended_at": "2026-09-21T12:00:00Z",
+          "updated_at": "2026-09-21T12:00:00Z"
+        }
+      },
+      "id": "convertConnectedAppToStandalone/basic",
+      "multipart": false,
+      "op": "convertConnectedAppToStandalone"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/official/account",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "display_number": "+55 51 99999-0000",
+              "id": "00000000-0000-4000-8000-000000000001",
+              "instance_id": "00000000-0000-4000-8000-000000000001",
+              "is_default": true,
+              "messaging_limit": "TIER_1K",
+              "phone_number_id": "106540352242922",
+              "project_id": "00000000-0000-4000-8000-000000000001",
+              "quality_rating": "GREEN",
+              "source": "embedded_signup",
+              "status": "PENDENTE",
+              "status_reason": "status_reason-1",
+              "tenant_id": "00000000-0000-4000-8000-000000000001",
+              "verified_name": "Berni Store",
+              "waba_id": "102290129340398"
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "display_number": "+55 51 99999-0000",
+          "id": "00000000-0000-4000-8000-000000000001",
+          "instance_id": "00000000-0000-4000-8000-000000000001",
+          "is_default": true,
+          "messaging_limit": "TIER_1K",
+          "phone_number_id": "106540352242922",
+          "project_id": "00000000-0000-4000-8000-000000000001",
+          "quality_rating": "GREEN",
+          "source": "embedded_signup",
+          "status": "PENDENTE",
+          "status_reason": "status_reason-1",
+          "tenant_id": "00000000-0000-4000-8000-000000000001",
+          "verified_name": "Berni Store",
+          "waba_id": "102290129340398"
+        }
+      },
+      "id": "getOfficialAccount/basic",
+      "multipart": false,
+      "op": "getOfficialAccount"
+    },
+    {
+      "args": {
+        "body": {
+          "access_token": "access_token-1",
+          "display_number": "display_number-1",
+          "phone_number_id": "106540352242922",
+          "status": "PENDENTE",
+          "verified_name": "verified_name-1",
+          "waba_id": "102290129340398"
+        },
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": {
+              "access_token": "access_token-1",
+              "display_number": "display_number-1",
+              "phone_number_id": "106540352242922",
+              "status": "PENDENTE",
+              "verified_name": "verified_name-1",
+              "waba_id": "102290129340398"
+            },
+            "method": "POST",
+            "path": "/official/account",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "display_number": "+55 51 99999-0000",
+              "id": "00000000-0000-4000-8000-000000000001",
+              "instance_id": "00000000-0000-4000-8000-000000000001",
+              "is_default": true,
+              "messaging_limit": "TIER_1K",
+              "phone_number_id": "106540352242922",
+              "project_id": "00000000-0000-4000-8000-000000000001",
+              "quality_rating": "GREEN",
+              "source": "embedded_signup",
+              "status": "PENDENTE",
+              "status_reason": "status_reason-1",
+              "tenant_id": "00000000-0000-4000-8000-000000000001",
+              "verified_name": "Berni Store",
+              "waba_id": "102290129340398"
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "display_number": "+55 51 99999-0000",
+          "id": "00000000-0000-4000-8000-000000000001",
+          "instance_id": "00000000-0000-4000-8000-000000000001",
+          "is_default": true,
+          "messaging_limit": "TIER_1K",
+          "phone_number_id": "106540352242922",
+          "project_id": "00000000-0000-4000-8000-000000000001",
+          "quality_rating": "GREEN",
+          "source": "embedded_signup",
+          "status": "PENDENTE",
+          "status_reason": "status_reason-1",
+          "tenant_id": "00000000-0000-4000-8000-000000000001",
+          "verified_name": "Berni Store",
+          "waba_id": "102290129340398"
+        }
+      },
+      "id": "connectOfficialAccount/basic",
+      "multipart": false,
+      "op": "connectOfficialAccount"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "DELETE",
+            "path": "/official/account",
+            "query": {}
+          },
+          "response": {
+            "body": null,
+            "headers": {},
+            "status": 204
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": null
+      },
+      "id": "disconnectOfficialAccount/basic",
+      "multipart": false,
+      "op": "disconnectOfficialAccount"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/official/signup-config",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "app_id": "00000000-0000-4000-8000-000000000001",
+              "config_id": "00000000-0000-4000-8000-000000000001",
+              "enabled": true,
+              "graph_version": "v26.0"
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "app_id": "00000000-0000-4000-8000-000000000001",
+          "config_id": "00000000-0000-4000-8000-000000000001",
+          "enabled": true,
+          "graph_version": "v26.0"
+        }
+      },
+      "id": "getOfficialSignupConfig/basic",
+      "multipart": false,
+      "op": "getOfficialSignupConfig"
+    },
+    {
+      "args": {
+        "body": {
+          "code": "code-1",
+          "phone_number_id": "00000000-0000-4000-8000-000000000001",
+          "waba_id": "00000000-0000-4000-8000-000000000001"
+        },
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": {
+              "code": "code-1",
+              "phone_number_id": "00000000-0000-4000-8000-000000000001",
+              "waba_id": "00000000-0000-4000-8000-000000000001"
+            },
+            "method": "POST",
+            "path": "/official/embedded-signup",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "account": {
+                "display_number": "+55 51 99999-0000",
+                "id": "00000000-0000-4000-8000-000000000001",
+                "instance_id": "00000000-0000-4000-8000-000000000001",
+                "is_default": true,
+                "messaging_limit": "TIER_1K",
+                "phone_number_id": "106540352242922",
+                "project_id": "00000000-0000-4000-8000-000000000001",
+                "quality_rating": "GREEN",
+                "source": "embedded_signup",
+                "status": "PENDENTE",
+                "status_reason": "status_reason-1",
+                "tenant_id": "00000000-0000-4000-8000-000000000001",
+                "verified_name": "Berni Store",
+                "waba_id": "102290129340398"
+              },
+              "warning": ""
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "account": {
+            "display_number": "+55 51 99999-0000",
+            "id": "00000000-0000-4000-8000-000000000001",
+            "instance_id": "00000000-0000-4000-8000-000000000001",
+            "is_default": true,
+            "messaging_limit": "TIER_1K",
+            "phone_number_id": "106540352242922",
+            "project_id": "00000000-0000-4000-8000-000000000001",
+            "quality_rating": "GREEN",
+            "source": "embedded_signup",
+            "status": "PENDENTE",
+            "status_reason": "status_reason-1",
+            "tenant_id": "00000000-0000-4000-8000-000000000001",
+            "verified_name": "Berni Store",
+            "waba_id": "102290129340398"
+          },
+          "warning": ""
+        }
+      },
+      "id": "completeOfficialSignup/basic",
+      "multipart": false,
+      "op": "completeOfficialSignup"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/official/status",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "business_review": "business_review-1",
+              "can_send": true,
+              "connected": true,
+              "display_number": "display_number-1",
+              "live": true,
+              "messaging_limit": "TIER_1K",
+              "name_status": "name_status-1",
+              "number_verified": true,
+              "problem": "problem-1",
+              "quality_rating": "GREEN",
+              "status": "PENDENTE",
+              "status_reason": "status_reason-1",
+              "verified_name": "verified_name-1"
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "business_review": "business_review-1",
+          "can_send": true,
+          "connected": true,
+          "display_number": "display_number-1",
+          "live": true,
+          "messaging_limit": "TIER_1K",
+          "name_status": "name_status-1",
+          "number_verified": true,
+          "problem": "problem-1",
+          "quality_rating": "GREEN",
+          "status": "PENDENTE",
+          "status_reason": "status_reason-1",
+          "verified_name": "verified_name-1"
+        }
+      },
+      "id": "getOfficialStatus/basic",
+      "multipart": false,
+      "op": "getOfficialStatus"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/templates",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "templates": [
+                {
+                  "category": "MARKETING",
+                  "created_at": "2026-09-21T12:00:00Z",
+                  "id": "00000000-0000-4000-8000-000000000001",
+                  "language": "language-1",
+                  "name": "name-1",
+                  "project_id": "00000000-0000-4000-8000-000000000001",
+                  "quality": "GREEN",
+                  "rejected_reason": "rejected_reason-1",
+                  "spec": {
+                    "body": {
+                      "example": [
+                        "example-1"
+                      ],
+                      "text": "text-1"
+                    },
+                    "buttons": [
+                      {
+                        "example": "example-1",
+                        "phone": "5511999990000",
+                        "text": "text-1",
+                        "type": "quick_reply",
+                        "url": "url-1"
+                      }
+                    ],
+                    "category": "MARKETING",
+                    "code_expiry_minutes": 1,
+                    "footer": "footer-1",
+                    "header": {
+                      "example": "example-1",
+                      "media_url": "media_url-1",
+                      "text": "text-1",
+                      "type": "text"
+                    },
+                    "language": "language-1",
+                    "name": "name-1"
+                  },
+                  "status": "PENDING",
+                  "updated_at": "2026-09-21T12:00:00Z",
+                  "variables": 1
+                }
+              ]
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "templates": [
+            {
+              "category": "MARKETING",
+              "created_at": "2026-09-21T12:00:00Z",
+              "id": "00000000-0000-4000-8000-000000000001",
+              "language": "language-1",
+              "name": "name-1",
+              "project_id": "00000000-0000-4000-8000-000000000001",
+              "quality": "GREEN",
+              "rejected_reason": "rejected_reason-1",
+              "spec": {
+                "body": {
+                  "example": [
+                    "example-1"
+                  ],
+                  "text": "text-1"
+                },
+                "buttons": [
+                  {
+                    "example": "example-1",
+                    "phone": "5511999990000",
+                    "text": "text-1",
+                    "type": "quick_reply",
+                    "url": "url-1"
+                  }
+                ],
+                "category": "MARKETING",
+                "code_expiry_minutes": 1,
+                "footer": "footer-1",
+                "header": {
+                  "example": "example-1",
+                  "media_url": "media_url-1",
+                  "text": "text-1",
+                  "type": "text"
+                },
+                "language": "language-1",
+                "name": "name-1"
+              },
+              "status": "PENDING",
+              "updated_at": "2026-09-21T12:00:00Z",
+              "variables": 1
+            }
+          ]
+        }
+      },
+      "id": "listTemplates/basic",
+      "multipart": false,
+      "op": "listTemplates"
+    },
+    {
+      "args": {
+        "body": {
+          "body": {
+            "example": [
+              "example-1"
+            ],
+            "text": "text-1"
+          },
+          "buttons": [
+            {
+              "example": "example-1",
+              "phone": "5511999990000",
+              "text": "text-1",
+              "type": "quick_reply",
+              "url": "url-1"
+            }
+          ],
+          "category": "MARKETING",
+          "code_expiry_minutes": 1,
+          "footer": "footer-1",
+          "header": {
+            "example": "example-1",
+            "media_url": "media_url-1",
+            "text": "text-1",
+            "type": "text"
+          },
+          "language": "language-1",
+          "name": "name-1"
+        },
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": {
+              "body": {
+                "example": [
+                  "example-1"
+                ],
+                "text": "text-1"
+              },
+              "buttons": [
+                {
+                  "example": "example-1",
+                  "phone": "5511999990000",
+                  "text": "text-1",
+                  "type": "quick_reply",
+                  "url": "url-1"
+                }
+              ],
+              "category": "MARKETING",
+              "code_expiry_minutes": 1,
+              "footer": "footer-1",
+              "header": {
+                "example": "example-1",
+                "media_url": "media_url-1",
+                "text": "text-1",
+                "type": "text"
+              },
+              "language": "language-1",
+              "name": "name-1"
+            },
+            "method": "POST",
+            "path": "/templates",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "advice": [
+                "advice-1"
+              ],
+              "template": {
+                "category": "MARKETING",
+                "created_at": "2026-09-21T12:00:00Z",
+                "id": "00000000-0000-4000-8000-000000000001",
+                "language": "language-1",
+                "name": "name-1",
+                "project_id": "00000000-0000-4000-8000-000000000001",
+                "quality": "GREEN",
+                "rejected_reason": "rejected_reason-1",
+                "spec": {
+                  "body": {
+                    "example": [
+                      "example-1"
+                    ],
+                    "text": "text-1"
+                  },
+                  "buttons": [
+                    {
+                      "example": "example-1",
+                      "phone": "5511999990000",
+                      "text": "text-1",
+                      "type": "quick_reply",
+                      "url": "url-1"
+                    }
+                  ],
+                  "category": "MARKETING",
+                  "code_expiry_minutes": 1,
+                  "footer": "footer-1",
+                  "header": {
+                    "example": "example-1",
+                    "media_url": "media_url-1",
+                    "text": "text-1",
+                    "type": "text"
+                  },
+                  "language": "language-1",
+                  "name": "name-1"
+                },
+                "status": "PENDING",
+                "updated_at": "2026-09-21T12:00:00Z",
+                "variables": 1
+              }
+            },
+            "headers": {},
+            "status": 201
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "advice": [
+            "advice-1"
+          ],
+          "template": {
+            "category": "MARKETING",
+            "created_at": "2026-09-21T12:00:00Z",
+            "id": "00000000-0000-4000-8000-000000000001",
+            "language": "language-1",
+            "name": "name-1",
+            "project_id": "00000000-0000-4000-8000-000000000001",
+            "quality": "GREEN",
+            "rejected_reason": "rejected_reason-1",
+            "spec": {
+              "body": {
+                "example": [
+                  "example-1"
+                ],
+                "text": "text-1"
+              },
+              "buttons": [
+                {
+                  "example": "example-1",
+                  "phone": "5511999990000",
+                  "text": "text-1",
+                  "type": "quick_reply",
+                  "url": "url-1"
+                }
+              ],
+              "category": "MARKETING",
+              "code_expiry_minutes": 1,
+              "footer": "footer-1",
+              "header": {
+                "example": "example-1",
+                "media_url": "media_url-1",
+                "text": "text-1",
+                "type": "text"
+              },
+              "language": "language-1",
+              "name": "name-1"
+            },
+            "status": "PENDING",
+            "updated_at": "2026-09-21T12:00:00Z",
+            "variables": 1
+          }
+        }
+      },
+      "id": "createTemplate/basic",
+      "multipart": false,
+      "op": "createTemplate"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/templates/00000000-0000-4000-8000-000000000001",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "category": "MARKETING",
+              "created_at": "2026-09-21T12:00:00Z",
+              "id": "00000000-0000-4000-8000-000000000001",
+              "language": "language-1",
+              "name": "name-1",
+              "project_id": "00000000-0000-4000-8000-000000000001",
+              "quality": "GREEN",
+              "rejected_reason": "rejected_reason-1",
+              "spec": {
+                "body": {
+                  "example": [
+                    "example-1"
+                  ],
+                  "text": "text-1"
+                },
+                "buttons": [
+                  {
+                    "example": "example-1",
+                    "phone": "5511999990000",
+                    "text": "text-1",
+                    "type": "quick_reply",
+                    "url": "url-1"
+                  }
+                ],
+                "category": "MARKETING",
+                "code_expiry_minutes": 1,
+                "footer": "footer-1",
+                "header": {
+                  "example": "example-1",
+                  "media_url": "media_url-1",
+                  "text": "text-1",
+                  "type": "text"
+                },
+                "language": "language-1",
+                "name": "name-1"
+              },
+              "status": "PENDING",
+              "updated_at": "2026-09-21T12:00:00Z",
+              "variables": 1
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "category": "MARKETING",
+          "created_at": "2026-09-21T12:00:00Z",
+          "id": "00000000-0000-4000-8000-000000000001",
+          "language": "language-1",
+          "name": "name-1",
+          "project_id": "00000000-0000-4000-8000-000000000001",
+          "quality": "GREEN",
+          "rejected_reason": "rejected_reason-1",
+          "spec": {
+            "body": {
+              "example": [
+                "example-1"
+              ],
+              "text": "text-1"
+            },
+            "buttons": [
+              {
+                "example": "example-1",
+                "phone": "5511999990000",
+                "text": "text-1",
+                "type": "quick_reply",
+                "url": "url-1"
+              }
+            ],
+            "category": "MARKETING",
+            "code_expiry_minutes": 1,
+            "footer": "footer-1",
+            "header": {
+              "example": "example-1",
+              "media_url": "media_url-1",
+              "text": "text-1",
+              "type": "text"
+            },
+            "language": "language-1",
+            "name": "name-1"
+          },
+          "status": "PENDING",
+          "updated_at": "2026-09-21T12:00:00Z",
+          "variables": 1
+        }
+      },
+      "id": "getTemplate/basic",
+      "multipart": false,
+      "op": "getTemplate"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "DELETE",
+            "path": "/templates/00000000-0000-4000-8000-000000000001",
+            "query": {}
+          },
+          "response": {
+            "body": null,
+            "headers": {},
+            "status": 204
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": null
+      },
+      "id": "deleteTemplate/basic",
+      "multipart": false,
+      "op": "deleteTemplate"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "POST",
+            "path": "/templates/sync",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "imported": 1
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "imported": 1
+        }
+      },
+      "id": "syncTemplates/basic",
+      "multipart": false,
+      "op": "syncTemplates"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/templates/fallback",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "template": {
+                "category": "MARKETING",
+                "created_at": "2026-09-21T12:00:00Z",
+                "id": "00000000-0000-4000-8000-000000000001",
+                "language": "language-1",
+                "name": "name-1",
+                "project_id": "00000000-0000-4000-8000-000000000001",
+                "quality": "GREEN",
+                "rejected_reason": "rejected_reason-1",
+                "spec": {
+                  "body": {
+                    "example": [
+                      "example-1"
+                    ],
+                    "text": "text-1"
+                  },
+                  "buttons": [
+                    {
+                      "example": "example-1",
+                      "phone": "5511999990000",
+                      "text": "text-1",
+                      "type": "quick_reply",
+                      "url": "url-1"
+                    }
+                  ],
+                  "category": "MARKETING",
+                  "code_expiry_minutes": 1,
+                  "footer": "footer-1",
+                  "header": {
+                    "example": "example-1",
+                    "media_url": "media_url-1",
+                    "text": "text-1",
+                    "type": "text"
+                  },
+                  "language": "language-1",
+                  "name": "name-1"
+                },
+                "status": "PENDING",
+                "updated_at": "2026-09-21T12:00:00Z",
+                "variables": 1
+              }
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "template": {
+            "category": "MARKETING",
+            "created_at": "2026-09-21T12:00:00Z",
+            "id": "00000000-0000-4000-8000-000000000001",
+            "language": "language-1",
+            "name": "name-1",
+            "project_id": "00000000-0000-4000-8000-000000000001",
+            "quality": "GREEN",
+            "rejected_reason": "rejected_reason-1",
+            "spec": {
+              "body": {
+                "example": [
+                  "example-1"
+                ],
+                "text": "text-1"
+              },
+              "buttons": [
+                {
+                  "example": "example-1",
+                  "phone": "5511999990000",
+                  "text": "text-1",
+                  "type": "quick_reply",
+                  "url": "url-1"
+                }
+              ],
+              "category": "MARKETING",
+              "code_expiry_minutes": 1,
+              "footer": "footer-1",
+              "header": {
+                "example": "example-1",
+                "media_url": "media_url-1",
+                "text": "text-1",
+                "type": "text"
+              },
+              "language": "language-1",
+              "name": "name-1"
+            },
+            "status": "PENDING",
+            "updated_at": "2026-09-21T12:00:00Z",
+            "variables": 1
+          }
+        }
+      },
+      "id": "getFallbackTemplate/basic",
+      "multipart": false,
+      "op": "getFallbackTemplate"
+    },
+    {
+      "args": {
+        "body": {
+          "template_id": "00000000-0000-4000-8000-000000000001"
+        },
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": {
+              "template_id": "00000000-0000-4000-8000-000000000001"
+            },
+            "method": "PUT",
+            "path": "/templates/fallback",
+            "query": {}
+          },
+          "response": {
+            "body": null,
+            "headers": {},
+            "status": 204
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": null
+      },
+      "id": "setFallbackTemplate/basic",
+      "multipart": false,
+      "op": "setFallbackTemplate"
+    },
+    {
+      "args": {
+        "body": {
+          "fields": {},
+          "file": {
+            "content_base64": "iVBORw0KGgo=",
+            "content_type": "image/png",
+            "filename": "arquivo.png"
+          }
+        },
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "POST",
+            "path": "/templates/media",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "url": "https://example.com/url"
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "url": "https://example.com/url"
+        }
+      },
+      "id": "uploadTemplateMedia/basic",
+      "multipart": true,
+      "op": "uploadTemplateMedia"
+    },
+    {
+      "args": {
+        "body": {
+          "fields": {},
+          "file": {
+            "content_base64": "iVBORw0KGgo=",
+            "content_type": "image/png",
+            "filename": "arquivo.png"
+          }
+        },
+        "path": {},
+        "query": {
+          "instance_id": "00000000-0000-4000-8000-000000000001"
+        }
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "POST",
+            "path": "/official/media",
+            "query": {
+              "instance_id": "00000000-0000-4000-8000-000000000001"
+            }
+          },
+          "response": {
+            "body": {
+              "expires_at": "2026-09-21T12:00:00Z",
+              "file_size": 1,
+              "id": "00000000-0000-4000-8000-000000000001",
+              "instance_id": "00000000-0000-4000-8000-000000000001",
+              "mime_type": "mime_type-1",
+              "type": "image"
+            },
+            "headers": {},
+            "status": 201
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "expires_at": "2026-09-21T12:00:00Z",
+          "file_size": 1,
+          "id": "00000000-0000-4000-8000-000000000001",
+          "instance_id": "00000000-0000-4000-8000-000000000001",
+          "mime_type": "mime_type-1",
+          "type": "image"
+        }
+      },
+      "id": "uploadOfficialMedia/basic",
+      "multipart": true,
+      "op": "uploadOfficialMedia"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {
+          "media_id": "media_id 1"
+        },
+        "query": {
+          "instance_id": "00000000-0000-4000-8000-000000000001"
+        }
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/official/media/media_id 1",
+            "query": {
+              "instance_id": "00000000-0000-4000-8000-000000000001"
+            }
+          },
+          "response": {
+            "body": {
+              "file_size": 1,
+              "id": "00000000-0000-4000-8000-000000000001",
+              "mime_type": "mime_type-1",
+              "sha256": "sha256-1"
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "file_size": 1,
+          "id": "00000000-0000-4000-8000-000000000001",
+          "mime_type": "mime_type-1",
+          "sha256": "sha256-1"
+        }
+      },
+      "id": "getOfficialMedia/basic",
+      "multipart": false,
+      "op": "getOfficialMedia"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {
+          "media_id": "media_id 1"
+        },
+        "query": {
+          "instance_id": "00000000-0000-4000-8000-000000000001"
+        }
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "DELETE",
+            "path": "/official/media/media_id 1",
+            "query": {
+              "instance_id": "00000000-0000-4000-8000-000000000001"
+            }
+          },
+          "response": {
+            "body": null,
+            "headers": {},
+            "status": 204
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": null
+      },
+      "id": "deleteOfficialMedia/basic",
+      "multipart": false,
+      "op": "deleteOfficialMedia"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
+        "query": {
+          "before": 1,
+          "limit": 1
+        }
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/official/webhook-events",
+            "query": {
+              "before": "1",
+              "limit": "1"
+            }
+          },
+          "response": {
+            "body": {
+              "data": [
+                {
+                  "attempts": 1,
+                  "body": {},
+                  "error": "error-1",
+                  "fields": "fields-1",
+                  "id": 1,
+                  "received_at": "2026-09-21T12:00:00Z",
+                  "status": "pending"
+                }
+              ]
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "data": [
+            {
+              "attempts": 1,
+              "body": {},
+              "error": "error-1",
+              "fields": "fields-1",
+              "id": 1,
+              "received_at": "2026-09-21T12:00:00Z",
+              "status": "pending"
+            }
+          ]
+        }
+      },
+      "id": "listMetaWebhookEvents/basic",
+      "multipart": false,
+      "op": "listMetaWebhookEvents"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/official/numbers",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "numbers": [
+                {
+                  "display_number": "+55 51 99999-0000",
+                  "id": "00000000-0000-4000-8000-000000000001",
+                  "instance_id": "00000000-0000-4000-8000-000000000001",
+                  "is_default": true,
+                  "messaging_limit": "TIER_1K",
+                  "phone_number_id": "106540352242922",
+                  "project_id": "00000000-0000-4000-8000-000000000001",
+                  "quality_rating": "GREEN",
+                  "source": "embedded_signup",
+                  "status": "PENDENTE",
+                  "status_reason": "status_reason-1",
+                  "tenant_id": "00000000-0000-4000-8000-000000000001",
+                  "verified_name": "Berni Store",
+                  "waba_id": "102290129340398"
+                }
+              ]
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "numbers": [
+            {
+              "display_number": "+55 51 99999-0000",
+              "id": "00000000-0000-4000-8000-000000000001",
+              "instance_id": "00000000-0000-4000-8000-000000000001",
+              "is_default": true,
+              "messaging_limit": "TIER_1K",
+              "phone_number_id": "106540352242922",
+              "project_id": "00000000-0000-4000-8000-000000000001",
+              "quality_rating": "GREEN",
+              "source": "embedded_signup",
+              "status": "PENDENTE",
+              "status_reason": "status_reason-1",
+              "tenant_id": "00000000-0000-4000-8000-000000000001",
+              "verified_name": "Berni Store",
+              "waba_id": "102290129340398"
+            }
+          ]
+        }
+      },
+      "id": "listOfficialNumbers/basic",
+      "multipart": false,
+      "op": "listOfficialNumbers"
+    },
+    {
+      "args": {
+        "body": {
+          "phone_number_id": "00000000-0000-4000-8000-000000000001"
+        },
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": {
+              "phone_number_id": "00000000-0000-4000-8000-000000000001"
+            },
+            "method": "POST",
+            "path": "/official/numbers",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "display_number": "+55 51 99999-0000",
+              "id": "00000000-0000-4000-8000-000000000001",
+              "instance_id": "00000000-0000-4000-8000-000000000001",
+              "is_default": true,
+              "messaging_limit": "TIER_1K",
+              "phone_number_id": "106540352242922",
+              "project_id": "00000000-0000-4000-8000-000000000001",
+              "quality_rating": "GREEN",
+              "source": "embedded_signup",
+              "status": "PENDENTE",
+              "status_reason": "status_reason-1",
+              "tenant_id": "00000000-0000-4000-8000-000000000001",
+              "verified_name": "Berni Store",
+              "waba_id": "102290129340398"
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "display_number": "+55 51 99999-0000",
+          "id": "00000000-0000-4000-8000-000000000001",
+          "instance_id": "00000000-0000-4000-8000-000000000001",
+          "is_default": true,
+          "messaging_limit": "TIER_1K",
+          "phone_number_id": "106540352242922",
+          "project_id": "00000000-0000-4000-8000-000000000001",
+          "quality_rating": "GREEN",
+          "source": "embedded_signup",
+          "status": "PENDENTE",
+          "status_reason": "status_reason-1",
+          "tenant_id": "00000000-0000-4000-8000-000000000001",
+          "verified_name": "Berni Store",
+          "waba_id": "102290129340398"
+        }
+      },
+      "id": "addOfficialNumber/basic",
+      "multipart": false,
+      "op": "addOfficialNumber"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/official/numbers/available",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "numbers": [
+                {
+                  "code_verification_status": "code_verification_status-1",
+                  "display_phone_number": "+55 51 99999-0000",
+                  "id": "00000000-0000-4000-8000-000000000001",
+                  "messaging_limit_tier": "TIER_250",
+                  "name_status": "name_status-1",
+                  "quality_rating": "GREEN",
+                  "verified_name": "verified_name-1"
+                }
+              ]
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "numbers": [
+            {
+              "code_verification_status": "code_verification_status-1",
+              "display_phone_number": "+55 51 99999-0000",
+              "id": "00000000-0000-4000-8000-000000000001",
+              "messaging_limit_tier": "TIER_250",
+              "name_status": "name_status-1",
+              "quality_rating": "GREEN",
+              "verified_name": "verified_name-1"
+            }
+          ]
+        }
+      },
+      "id": "listAvailableOfficialNumbers/basic",
+      "multipart": false,
+      "op": "listAvailableOfficialNumbers"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "PUT",
+            "path": "/official/numbers/00000000-0000-4000-8000-000000000001/default",
+            "query": {}
+          },
+          "response": {
+            "body": null,
+            "headers": {},
+            "status": 204
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": null
+      },
+      "id": "setDefaultOfficialNumber/basic",
+      "multipart": false,
+      "op": "setDefaultOfficialNumber"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "DELETE",
+            "path": "/official/numbers/00000000-0000-4000-8000-000000000001",
+            "query": {}
+          },
+          "response": {
+            "body": null,
+            "headers": {},
+            "status": 204
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": null
+      },
+      "id": "disconnectOfficialNumber/basic",
+      "multipart": false,
+      "op": "disconnectOfficialNumber"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/official/profile",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "about": "about-1",
+              "address": "address-1",
+              "description": "description-1",
+              "email": "contato@empresa.com.br",
+              "vertical": "UNDEFINED",
+              "websites": [
+                "https://example.com/website"
+              ]
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "about": "about-1",
+          "address": "address-1",
+          "description": "description-1",
+          "email": "contato@empresa.com.br",
+          "vertical": "UNDEFINED",
+          "websites": [
+            "https://example.com/website"
+          ]
+        }
+      },
+      "id": "getOfficialProfile/basic",
+      "multipart": false,
+      "op": "getOfficialProfile"
+    },
+    {
+      "args": {
+        "body": {
+          "about": "about-1",
+          "address": "address-1",
+          "description": "description-1",
+          "email": "contato@empresa.com.br",
+          "vertical": "UNDEFINED",
+          "websites": [
+            "https://example.com/website"
+          ]
+        },
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": {
+              "about": "about-1",
+              "address": "address-1",
+              "description": "description-1",
+              "email": "contato@empresa.com.br",
+              "vertical": "UNDEFINED",
+              "websites": [
+                "https://example.com/website"
+              ]
+            },
+            "method": "PUT",
+            "path": "/official/profile",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "about": "about-1",
+              "address": "address-1",
+              "description": "description-1",
+              "email": "contato@empresa.com.br",
+              "vertical": "UNDEFINED",
+              "websites": [
+                "https://example.com/website"
+              ]
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "about": "about-1",
+          "address": "address-1",
+          "description": "description-1",
+          "email": "contato@empresa.com.br",
+          "vertical": "UNDEFINED",
+          "websites": [
+            "https://example.com/website"
+          ]
+        }
+      },
+      "id": "updateOfficialProfile/basic",
+      "multipart": false,
+      "op": "updateOfficialProfile"
+    },
+    {
+      "args": {
+        "body": {
+          "fields": {},
+          "file": {
+            "content_base64": "iVBORw0KGgo=",
+            "content_type": "image/png",
+            "filename": "arquivo.png"
+          }
+        },
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "POST",
+            "path": "/official/profile/photo",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "about": "about-1",
+              "address": "address-1",
+              "description": "description-1",
+              "email": "contato@empresa.com.br",
+              "vertical": "UNDEFINED",
+              "websites": [
+                "https://example.com/website"
+              ]
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "about": "about-1",
+          "address": "address-1",
+          "description": "description-1",
+          "email": "contato@empresa.com.br",
+          "vertical": "UNDEFINED",
+          "websites": [
+            "https://example.com/website"
+          ]
+        }
+      },
+      "id": "uploadOfficialProfilePhoto/basic",
+      "multipart": true,
+      "op": "uploadOfficialProfilePhoto"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "POST",
+            "path": "/official/profile/reregister",
+            "query": {}
+          },
+          "response": {
+            "body": null,
+            "headers": {},
+            "status": 204
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": null
+      },
+      "id": "reregisterOfficialProfile/basic",
+      "multipart": false,
+      "op": "reregisterOfficialProfile"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/official/numbers/00000000-0000-4000-8000-000000000001/profile",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "about": "about-1",
+              "address": "address-1",
+              "description": "description-1",
+              "email": "contato@empresa.com.br",
+              "vertical": "UNDEFINED",
+              "websites": [
+                "https://example.com/website"
+              ]
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "about": "about-1",
+          "address": "address-1",
+          "description": "description-1",
+          "email": "contato@empresa.com.br",
+          "vertical": "UNDEFINED",
+          "websites": [
+            "https://example.com/website"
+          ]
+        }
+      },
+      "id": "getOfficialNumberProfile/basic",
+      "multipart": false,
+      "op": "getOfficialNumberProfile"
+    },
+    {
+      "args": {
+        "body": {
+          "about": "about-1",
+          "address": "address-1",
+          "description": "description-1",
+          "email": "contato@empresa.com.br",
+          "vertical": "UNDEFINED",
+          "websites": [
+            "https://example.com/website"
+          ]
+        },
+        "path": {
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": {
+              "about": "about-1",
+              "address": "address-1",
+              "description": "description-1",
+              "email": "contato@empresa.com.br",
+              "vertical": "UNDEFINED",
+              "websites": [
+                "https://example.com/website"
+              ]
+            },
+            "method": "PUT",
+            "path": "/official/numbers/00000000-0000-4000-8000-000000000001/profile",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "about": "about-1",
+              "address": "address-1",
+              "description": "description-1",
+              "email": "contato@empresa.com.br",
+              "vertical": "UNDEFINED",
+              "websites": [
+                "https://example.com/website"
+              ]
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "about": "about-1",
+          "address": "address-1",
+          "description": "description-1",
+          "email": "contato@empresa.com.br",
+          "vertical": "UNDEFINED",
+          "websites": [
+            "https://example.com/website"
+          ]
+        }
+      },
+      "id": "updateOfficialNumberProfile/basic",
+      "multipart": false,
+      "op": "updateOfficialNumberProfile"
+    },
+    {
+      "args": {
+        "body": {
+          "fields": {},
+          "file": {
+            "content_base64": "iVBORw0KGgo=",
+            "content_type": "image/png",
+            "filename": "arquivo.png"
+          }
+        },
+        "path": {
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "POST",
+            "path": "/official/numbers/00000000-0000-4000-8000-000000000001/profile/photo",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "about": "about-1",
+              "address": "address-1",
+              "description": "description-1",
+              "email": "contato@empresa.com.br",
+              "vertical": "UNDEFINED",
+              "websites": [
+                "https://example.com/website"
+              ]
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "about": "about-1",
+          "address": "address-1",
+          "description": "description-1",
+          "email": "contato@empresa.com.br",
+          "vertical": "UNDEFINED",
+          "websites": [
+            "https://example.com/website"
+          ]
+        }
+      },
+      "id": "uploadOfficialNumberProfilePhoto/basic",
+      "multipart": true,
+      "op": "uploadOfficialNumberProfilePhoto"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "POST",
+            "path": "/official/numbers/00000000-0000-4000-8000-000000000001/profile/reregister",
+            "query": {}
+          },
+          "response": {
+            "body": null,
+            "headers": {},
+            "status": 204
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": null
+      },
+      "id": "reregisterOfficialNumberProfile/basic",
+      "multipart": false,
+      "op": "reregisterOfficialNumberProfile"
     },
     {
       "args": {
@@ -10317,6 +12463,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -10331,6 +12482,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -10436,6 +12592,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -10450,6 +12611,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -10555,6 +12721,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -10569,6 +12740,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -10676,6 +12852,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -10692,6 +12873,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -10840,6 +13026,11 @@
           "response": {
             "body": {
               "client_reference": "client_reference-1",
+              "delivery": {
+                "note": "note-1",
+                "template": "template-1",
+                "via": "template_fallback"
+              },
               "message_id": "00000000-0000-4000-8000-000000000001",
               "scheduled_at": "2026-09-21T12:00:00Z",
               "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -10854,6 +13045,11 @@
       "expect": {
         "result": {
           "client_reference": "client_reference-1",
+          "delivery": {
+            "note": "note-1",
+            "template": "template-1",
+            "via": "template_fallback"
+          },
           "message_id": "00000000-0000-4000-8000-000000000001",
           "scheduled_at": "2026-09-21T12:00:00Z",
           "scheduled_id": "00000000-0000-4000-8000-000000000001",
@@ -10984,6 +13180,7 @@
               "phone": "+5511999999999",
               "project_id": "00000000-0000-4000-8000-000000000001",
               "proxy_url": "proxy_url-1",
+              "rail": "unofficial",
               "status": "qr_pending",
               "status_reason": "",
               "tenant_id": "00000000-0000-4000-8000-000000000001",
@@ -11012,6 +13209,7 @@
           "phone": "+5511999999999",
           "project_id": "00000000-0000-4000-8000-000000000001",
           "proxy_url": "proxy_url-1",
+          "rail": "unofficial",
           "status": "qr_pending",
           "status_reason": "",
           "tenant_id": "00000000-0000-4000-8000-000000000001",
@@ -11028,6 +13226,7 @@
   "ops": [
     "addCampaignRecipients",
     "addContactNote",
+    "addOfficialNumber",
     "addPoolNumber",
     "applyBrand",
     "applyChatLabel",
@@ -11041,10 +13240,12 @@
     "checkoutAddonCart",
     "clearAddonCart",
     "clearInstanceSession",
+    "completeOfficialSignup",
     "connectInstance",
     "connectOfficialAccount",
     "contactsCheck",
     "conversationHistory",
+    "convertConnectedAppToStandalone",
     "createCampaign",
     "createConnectSession",
     "createContact",
@@ -11057,17 +13258,21 @@
     "createProject",
     "createSuppression",
     "createTag",
+    "createTemplate",
     "createWebhook",
     "deleteContact",
     "deleteContactGroup",
     "deleteInstance",
     "deleteLabel",
+    "deleteOfficialMedia",
     "deleteProject",
     "deleteSuppression",
     "deleteTag",
+    "deleteTemplate",
     "deleteWebhook",
     "disconnectInstance",
     "disconnectOfficialAccount",
+    "disconnectOfficialNumber",
     "dryRunCampaign",
     "editMessage",
     "estimateCampaign",
@@ -11082,6 +13287,7 @@
     "getCampaignEligibility",
     "getContact",
     "getContactHistory",
+    "getFallbackTemplate",
     "getGroup",
     "getHealth",
     "getInstance",
@@ -11089,12 +13295,18 @@
     "getMyEntitlements",
     "getMySubscription",
     "getOfficialAccount",
+    "getOfficialMedia",
+    "getOfficialNumberProfile",
+    "getOfficialProfile",
+    "getOfficialSignupConfig",
+    "getOfficialStatus",
     "getPartnerConnection",
     "getPartnerMe",
     "getPool",
     "getPricing",
     "getProjectBrand",
     "getProjectsHealth",
+    "getTemplate",
     "getUsage",
     "groupInviteLink",
     "importContacts",
@@ -11102,6 +13314,7 @@
     "joinGroup",
     "leaveGroup",
     "listAdvisories",
+    "listAvailableOfficialNumbers",
     "listCampaignRecipients",
     "listCampaigns",
     "listConnectedApps",
@@ -11112,14 +13325,17 @@
     "listInstances",
     "listJoinRequests",
     "listLabels",
+    "listMetaWebhookEvents",
     "listMyInvoices",
     "listMyKeys",
+    "listOfficialNumbers",
     "listPartnerConnections",
     "listPools",
     "listProjects",
     "listScheduled",
     "listSuppressions",
     "listTags",
+    "listTemplates",
     "listUsers",
     "listWebhookDeliveries",
     "listWebhooks",
@@ -11138,8 +13354,11 @@
     "pinChat",
     "presenceChat",
     "previewGroupInvite",
+    "redeliverWebhookDelivery",
     "rejectCall",
     "removeUser",
+    "reregisterOfficialNumberProfile",
+    "reregisterOfficialProfile",
     "resumeCampaign",
     "revokeConnectedApp",
     "revokeMessage",
@@ -11158,9 +13377,12 @@
     "sendPoll",
     "sendReaction",
     "sendSticker",
+    "sendTemplate",
     "sendText",
     "sendVideo",
     "setBrand",
+    "setDefaultOfficialNumber",
+    "setFallbackTemplate",
     "setInboundFilters",
     "setInstanceProxy",
     "setPrivacy",
@@ -11168,6 +13390,7 @@
     "setProjectBrand",
     "startCampaign",
     "suppressContact",
+    "syncTemplates",
     "testWebhook",
     "triggerWebhookEvent",
     "unarchiveInstance",
@@ -11179,6 +13402,8 @@
     "updateGroup",
     "updateGroupParticipants",
     "updateJoinRequests",
+    "updateOfficialNumberProfile",
+    "updateOfficialProfile",
     "updateProfile",
     "updateProject",
     "updateUserRole",
@@ -11186,7 +13411,11 @@
     "upgradePlan",
     "uploadBrandLogo",
     "uploadCampaignMedia",
-    "uploadProjectLogo"
+    "uploadOfficialMedia",
+    "uploadOfficialNumberProfilePhoto",
+    "uploadOfficialProfilePhoto",
+    "uploadProjectLogo",
+    "uploadTemplateMedia"
   ],
   "sdk_excluded_ops": [
     "cancelAccountDeletion",

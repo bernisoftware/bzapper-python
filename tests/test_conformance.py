@@ -52,6 +52,15 @@ def client(name: str) -> Call:
     return call
 
 
+def client_path(name: str, *keys: str) -> Call:
+    """Como client(), mas com os parâmetros de caminho na ordem da ROTA (o caso os
+    traz em ordem alfabética). `keys` vai como default, não na closure: a cobertura
+    lê o nome do método em __closure__[0]."""
+    def call(c: Client, p: PartnerClient, a: Args, opts: Dict[str, Any], _keys: tuple = keys) -> Any:
+        return getattr(c, name)(*(a["path"][k] for k in _keys), **_flat(a), **opts)
+    return call
+
+
 def partner(name: str) -> Call:
     def call(c: Client, p: PartnerClient, a: Args, opts: Dict[str, Any]) -> Any:
         return getattr(p, name)(*a["path"].values(), **_flat(a), **opts)
@@ -72,6 +81,15 @@ def profile(name: str) -> Call:
     """BrandProfile goes as ONE dict argument (``set_brand(profile)``)."""
     def call(c: Client, p: PartnerClient, a: Args, opts: Dict[str, Any]) -> Any:
         return getattr(c, name)(*a["path"].values(), a["body"], **opts)
+    return call
+
+
+def upload_q(name: str) -> Call:
+    """Multipart com parâmetros de query (vão como kwargs)."""
+    def call(c: Client, p: PartnerClient, a: Args, opts: Dict[str, Any]) -> Any:
+        f = a["body"]["file"]
+        content = base64.b64decode(f["content_base64"])
+        return getattr(c, name)(content, f.get("filename"), f.get("content_type"), **a["query"], **opts)
     return call
 
 
@@ -211,6 +229,36 @@ OPS: Dict[str, Call] = {
     "getOfficialAccount": client("get_official_account"),
     "connectOfficialAccount": client("connect_official_account"),
     "disconnectOfficialAccount": client("disconnect_official_account"),
+    "getOfficialSignupConfig": client("get_official_signup_config"),
+    "completeOfficialSignup": client("complete_official_signup"),
+    "getOfficialStatus": client("get_official_status"),
+    "uploadOfficialMedia": upload_q("upload_official_media"),
+    "getOfficialMedia": client("get_official_media"),
+    "deleteOfficialMedia": client("delete_official_media"),
+    "listMetaWebhookEvents": client("list_meta_webhook_events"),
+    "listOfficialNumbers": client("list_official_numbers"),
+    "listAvailableOfficialNumbers": client("list_available_official_numbers"),
+    "addOfficialNumber": client("add_official_number"),
+    "setDefaultOfficialNumber": client("set_default_official_number"),
+    "disconnectOfficialNumber": client("disconnect_official_number"),
+    "getOfficialProfile": client("get_official_profile"),
+    "updateOfficialProfile": client("update_official_profile"),
+    "uploadOfficialProfilePhoto": upload("upload_official_profile_photo"),
+    "reregisterOfficialProfile": client("reregister_official_profile"),
+    "getOfficialNumberProfile": client("get_official_number_profile"),
+    "updateOfficialNumberProfile": client("update_official_number_profile"),
+    "uploadOfficialNumberProfilePhoto": upload("upload_official_number_profile_photo"),
+    "reregisterOfficialNumberProfile": client("reregister_official_number_profile"),
+    # templates (official rail)
+    "sendTemplate": client("send_template"),
+    "listTemplates": client("list_templates"),
+    "createTemplate": client("create_template"),
+    "getTemplate": client("get_template"),
+    "deleteTemplate": client("delete_template"),
+    "syncTemplates": client("sync_templates"),
+    "uploadTemplateMedia": upload("upload_template_media"),
+    "getFallbackTemplate": client("get_fallback_template"),
+    "setFallbackTemplate": client("set_fallback_template"),
     # groups
     "listGroups": client("list_groups"),
     "createGroup": client("create_group"),
@@ -252,10 +300,13 @@ OPS: Dict[str, Call] = {
     "deleteWebhook": client("delete_webhook"),
     "testWebhook": client("test_webhook"),
     "listWebhookDeliveries": client("webhook_deliveries"),
+    # Dois parâmetros de caminho: a ordem do caso é alfabética, não a da rota.
+    "redeliverWebhookDelivery": client_path("redeliver_webhook_delivery", "id", "delivery_id"),
     "triggerWebhookEvent": client("trigger_webhook_event"),
     # bZapper Connect — customer side
     "listConnectedApps": client("list_connected_apps"),
     "revokeConnectedApp": client("revoke_connected_app"),
+    "convertConnectedAppToStandalone": client("convert_connected_app_to_standalone"),
     # bZapper Connect — partner client
     "getPartnerMe": partner("me"),
     "createConnectSession": partner("create_connect_session"),

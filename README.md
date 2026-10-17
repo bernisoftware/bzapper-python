@@ -1,13 +1,13 @@
 # bzapper
 
-Official **Python SDK** for the [bZapper](https://bzapper.com.br) WhatsApp gateway API — a multi-tenant WhatsApp gateway: connect numbers, send and receive messages, rotate numbers (anti-ban) and track usage.
+**Python SDK** for the [bZapper](https://bzapper.com.br) WhatsApp gateway API — a multi-tenant WhatsApp gateway: connect numbers, send and receive messages, keep delivery running across several numbers and track usage.
 
 Zero runtime dependencies (pure standard library). Python 3.9+.
 
 ## Install
 
 ```bash
-pip install bzapper==0.8.2
+pip install bzapper==0.9.0
 ```
 
 **Pin the exact version** (`bzapper==X.Y.Z` in `requirements.txt` / `pyproject.toml`).
@@ -180,10 +180,47 @@ client.delete_instance(inst["id"])
 # Official WhatsApp Business (Cloud API) — projects created with api_mode="OFFICIAL"
 client.get_official_account()
 client.connect_official_account("waba_id", "phone_number_id", "access_token")
+client.connect_official_account("waba_id", access_token="...")  # number discovered from the WABA
 client.disconnect_official_account()
+client.get_official_status()                 # can_send, quality, tier — checked live against Meta
+
+# Embedded Signup (the one touch with Meta): config for the browser, then the popup's code
+cfg = client.get_official_signup_config()    # {"enabled", "app_id", "config_id", "graph_version"}
+client.complete_official_signup(code, waba_id)  # → {"account", "warning"}
+
+# Several numbers on one WABA — each has an instance_id you pass in sends
+client.list_official_numbers()
+client.list_available_official_numbers()
+client.add_official_number("phone_number_id")
+client.set_default_official_number(number_id)
+client.disconnect_official_number(number_id)  # history stays
+
+# Business profile (send the WHOLE profile: an empty field clears it on Meta)
+profile = client.get_official_profile()      # or get_official_number_profile(number_id)
+client.update_official_profile(about="Atendimento 8h–18h", websites=["https://example.com"])
+client.upload_official_profile_photo("logo.png")  # JPEG/PNG up to 5 MB
+client.reregister_official_profile()          # after Meta approves a new display name
+# per number: update_official_number_profile / upload_official_number_profile_photo /
+#             reregister_official_number_profile(number_id, ...)
+
+# Templates — the only way to open a conversation outside the 24h window
+media = client.upload_template_media("sample.jpg")  # header sample Meta reviews
+client.create_template(
+    "pedido_enviado", "pt_BR", "UTILITY",
+    {"text": "Oi {{1}}, seu pedido {{2}} saiu para entrega.", "example": ["Ana", "123"]},
+    header={"type": "image", "media_url": media["url"]},
+)                                            # → {"template", "advice"}; Meta decides via webhook
+client.list_templates()
+client.send_template("+5511999999999", "pedido_enviado", language="pt_BR",
+                     variables=["Ana", "123"])
+client.sync_templates()                      # import templates created in WhatsApp Manager
+client.set_fallback_template(template_id)    # sent when the 24h window is closed
+client.get_fallback_template()
+# With a fallback set, send_text outside the window still goes out — and the result
+# says so: {"message_id", "status", "delivery": {"via": "template_fallback", "template", "note"}}
 ```
 
-## Pools (number rotation)
+## Pools (number redundancy)
 
 ```python
 pool = client.create_pool(name="Sales", strategy="health_weighted", is_default=True)
