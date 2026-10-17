@@ -7,7 +7,7 @@ Zero runtime dependencies (pure standard library). Python 3.9+.
 ## Install
 
 ```bash
-pip install bzapper==0.9.3
+pip install bzapper==0.9.4
 ```
 
 **Pin the exact version** (`bzapper==X.Y.Z` in `requirements.txt` / `pyproject.toml`).
