@@ -267,6 +267,8 @@ OPS: Dict[str, Call] = {
     "deleteTemplate": client("delete_template"),
     "syncTemplates": client("sync_templates"),
     "uploadTemplateMedia": upload("upload_template_media"),
+    "getOTPTemplate": client("get_otp_template"),
+    "setOTPTemplate": client("set_otp_template"),
     "getFallbackTemplate": client("get_fallback_template"),
     "setFallbackTemplate": client("set_fallback_template"),
     # groups

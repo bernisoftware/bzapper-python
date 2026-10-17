@@ -10958,6 +10958,168 @@
     },
     {
       "args": {
+        "body": null,
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/templates/otp",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "eligibility": {
+                "approved_auth_templates": 1,
+                "business_verification": "business_verification-1",
+                "limit_ok": true,
+                "messaging_limit": "messaging_limit-1",
+                "required_limit": "required_limit-1",
+                "verification_ok": true
+              },
+              "template": {
+                "category": "MARKETING",
+                "created_at": "2026-09-21T12:00:00Z",
+                "id": "00000000-0000-4000-8000-000000000001",
+                "language": "language-1",
+                "name": "name-1",
+                "project_id": "00000000-0000-4000-8000-000000000001",
+                "quality": "GREEN",
+                "rejected_reason": "rejected_reason-1",
+                "spec": {
+                  "body": {
+                    "example": [
+                      "example-1"
+                    ],
+                    "text": "text-1"
+                  },
+                  "buttons": [
+                    {
+                      "example": "example-1",
+                      "phone": "5511999990000",
+                      "text": "text-1",
+                      "type": "quick_reply",
+                      "url": "url-1"
+                    }
+                  ],
+                  "category": "MARKETING",
+                  "code_expiry_minutes": 1,
+                  "footer": "footer-1",
+                  "header": {
+                    "example": "example-1",
+                    "media_url": "media_url-1",
+                    "text": "text-1",
+                    "type": "text"
+                  },
+                  "language": "language-1",
+                  "name": "name-1"
+                },
+                "status": "PENDING",
+                "updated_at": "2026-09-21T12:00:00Z",
+                "variables": 1
+              }
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "eligibility": {
+            "approved_auth_templates": 1,
+            "business_verification": "business_verification-1",
+            "limit_ok": true,
+            "messaging_limit": "messaging_limit-1",
+            "required_limit": "required_limit-1",
+            "verification_ok": true
+          },
+          "template": {
+            "category": "MARKETING",
+            "created_at": "2026-09-21T12:00:00Z",
+            "id": "00000000-0000-4000-8000-000000000001",
+            "language": "language-1",
+            "name": "name-1",
+            "project_id": "00000000-0000-4000-8000-000000000001",
+            "quality": "GREEN",
+            "rejected_reason": "rejected_reason-1",
+            "spec": {
+              "body": {
+                "example": [
+                  "example-1"
+                ],
+                "text": "text-1"
+              },
+              "buttons": [
+                {
+                  "example": "example-1",
+                  "phone": "5511999990000",
+                  "text": "text-1",
+                  "type": "quick_reply",
+                  "url": "url-1"
+                }
+              ],
+              "category": "MARKETING",
+              "code_expiry_minutes": 1,
+              "footer": "footer-1",
+              "header": {
+                "example": "example-1",
+                "media_url": "media_url-1",
+                "text": "text-1",
+                "type": "text"
+              },
+              "language": "language-1",
+              "name": "name-1"
+            },
+            "status": "PENDING",
+            "updated_at": "2026-09-21T12:00:00Z",
+            "variables": 1
+          }
+        }
+      },
+      "id": "getOTPTemplate/basic",
+      "multipart": false,
+      "op": "getOTPTemplate"
+    },
+    {
+      "args": {
+        "body": {
+          "template_id": "00000000-0000-4000-8000-000000000001"
+        },
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": {
+              "template_id": "00000000-0000-4000-8000-000000000001"
+            },
+            "method": "PUT",
+            "path": "/templates/otp",
+            "query": {}
+          },
+          "response": {
+            "body": null,
+            "headers": {},
+            "status": 204
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": null
+      },
+      "id": "setOTPTemplate/basic",
+      "multipart": false,
+      "op": "setOTPTemplate"
+    },
+    {
+      "args": {
         "body": {
           "fields": {},
           "file": {
@@ -13477,6 +13639,7 @@
     "getMe",
     "getMyEntitlements",
     "getMySubscription",
+    "getOTPTemplate",
     "getOfficialAccount",
     "getOfficialInsights",
     "getOfficialMedia",
@@ -13569,6 +13732,7 @@
     "setFallbackTemplate",
     "setInboundFilters",
     "setInstanceProxy",
+    "setOTPTemplate",
     "setPrivacy",
     "setProfile",
     "setProjectBrand",

@@ -2094,6 +2094,23 @@ class Client:
         """
         return self._upload("/templates/media", file, filename, content_type, None, idempotency_key)
 
+    def get_otp_template(self) -> JSONDict:
+        """Template that carries the verification code outside the window, plus eligibility.
+
+        ``GET /templates/otp`` — ``{"template": ... | None, "eligibility": {...}}``:
+        whether Meta already allows Authentication templates (business verified,
+        2,000-a-day sending limit) and the state of each criterion.
+        """
+        return self._request("GET", "/templates/otp")
+
+    def set_otp_template(self, template_id: Optional[str], *, idempotency_key: Optional[str] = None) -> None:
+        """Choose the APPROVED Authentication template for the verification code. ``PUT /templates/otp``
+
+        Another category is refused (422 ``template_not_authentication``). ``None``
+        or ``""`` clears the choice.
+        """
+        self._request("PUT", "/templates/otp", body={"template_id": template_id or ""}, idempotency_key=idempotency_key)
+
     def get_fallback_template(self) -> JSONDict:
         """The template sent when the 24-hour window is closed. ``GET /templates/fallback``
 
