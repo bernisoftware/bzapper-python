@@ -84,6 +84,15 @@ def profile(name: str) -> Call:
     return call
 
 
+def client_renamed(name: str, rename: Dict[str, str]) -> Call:
+    """Como client(), trocando chaves que são palavra reservada em Python
+    (`from` vira `from_`). `name` fica primeiro na closure: a cobertura o lê lá."""
+    def call(c: Client, p: PartnerClient, a: Args, opts: Dict[str, Any]) -> Any:
+        kw = {rename.get(k, k): v for k, v in _flat(a).items()}
+        return getattr(c, name)(*a["path"].values(), **kw, **opts)
+    return call
+
+
 def upload_q(name: str) -> Call:
     """Multipart com parâmetros de query (vão como kwargs)."""
     def call(c: Client, p: PartnerClient, a: Args, opts: Dict[str, Any]) -> Any:
@@ -232,6 +241,7 @@ OPS: Dict[str, Call] = {
     "getOfficialSignupConfig": client("get_official_signup_config"),
     "completeOfficialSignup": client("complete_official_signup"),
     "getOfficialStatus": client("get_official_status"),
+    "getOfficialInsights": client_renamed("get_official_insights", {"from": "from_"}),
     "uploadOfficialMedia": upload_q("upload_official_media"),
     "getOfficialMedia": client("get_official_media"),
     "deleteOfficialMedia": client("delete_official_media"),

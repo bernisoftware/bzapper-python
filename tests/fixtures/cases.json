@@ -10998,6 +10998,185 @@
     },
     {
       "args": {
+        "body": null,
+        "path": {},
+        "query": {
+          "days": 1,
+          "from": "2026-09-21T12:00:00Z",
+          "to": "2026-09-21T12:00:00Z"
+        }
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/official/insights",
+            "query": {
+              "days": "1",
+              "from": "2026-09-21T12:00:00Z",
+              "to": "2026-09-21T12:00:00Z"
+            }
+          },
+          "response": {
+            "body": {
+              "ad_referrals": 1,
+              "cost": {
+                "by_category": [
+                  {
+                    "billable": 1,
+                    "category": "marketing",
+                    "cost": 1.5,
+                    "messages": 1
+                  }
+                ],
+                "change_pct": 1.5,
+                "confirmed": 1,
+                "currency": "currency-1",
+                "estimated": 1,
+                "month_to_date": 1.5,
+                "other_countries": 1,
+                "period": 1.5,
+                "previous_period": 1.5,
+                "projected_month": 1.5
+              },
+              "failures": [
+                {
+                  "count": 1,
+                  "reason": "reason-1"
+                }
+              ],
+              "from": "2026-09-21T12:00:00Z",
+              "marketing_opt_outs": 1,
+              "messages": {
+                "contacts": 1,
+                "delivered": 1,
+                "delivery_rate": 1.5,
+                "failed": 1,
+                "free_messages": 1,
+                "read": 1,
+                "read_rate": 1.5,
+                "received": 1,
+                "sent": 1
+              },
+              "numbers": [
+                {
+                  "display_number": "display_number-1",
+                  "limit": "limit-1",
+                  "quality": "quality-1",
+                  "status": "status-1"
+                }
+              ],
+              "rate_card": {
+                "currency": "currency-1",
+                "effective": "effective-1",
+                "market": "market-1",
+                "rates": {},
+                "source": "source-1",
+                "tiers": [
+                  {
+                    "from": 1,
+                    "rate": 1.5
+                  }
+                ]
+              },
+              "templates": [
+                {
+                  "category": "category-1",
+                  "cost": 1.5,
+                  "failed": 1,
+                  "name": "name-1",
+                  "sent": 1
+                }
+              ],
+              "to": "2026-09-21T12:00:00Z"
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "ad_referrals": 1,
+          "cost": {
+            "by_category": [
+              {
+                "billable": 1,
+                "category": "marketing",
+                "cost": 1.5,
+                "messages": 1
+              }
+            ],
+            "change_pct": 1.5,
+            "confirmed": 1,
+            "currency": "currency-1",
+            "estimated": 1,
+            "month_to_date": 1.5,
+            "other_countries": 1,
+            "period": 1.5,
+            "previous_period": 1.5,
+            "projected_month": 1.5
+          },
+          "failures": [
+            {
+              "count": 1,
+              "reason": "reason-1"
+            }
+          ],
+          "from": "2026-09-21T12:00:00Z",
+          "marketing_opt_outs": 1,
+          "messages": {
+            "contacts": 1,
+            "delivered": 1,
+            "delivery_rate": 1.5,
+            "failed": 1,
+            "free_messages": 1,
+            "read": 1,
+            "read_rate": 1.5,
+            "received": 1,
+            "sent": 1
+          },
+          "numbers": [
+            {
+              "display_number": "display_number-1",
+              "limit": "limit-1",
+              "quality": "quality-1",
+              "status": "status-1"
+            }
+          ],
+          "rate_card": {
+            "currency": "currency-1",
+            "effective": "effective-1",
+            "market": "market-1",
+            "rates": {},
+            "source": "source-1",
+            "tiers": [
+              {
+                "from": 1,
+                "rate": 1.5
+              }
+            ]
+          },
+          "templates": [
+            {
+              "category": "category-1",
+              "cost": 1.5,
+              "failed": 1,
+              "name": "name-1",
+              "sent": 1
+            }
+          ],
+          "to": "2026-09-21T12:00:00Z"
+        }
+      },
+      "id": "getOfficialInsights/basic",
+      "multipart": false,
+      "op": "getOfficialInsights"
+    },
+    {
+      "args": {
         "body": {
           "fields": {},
           "file": {
@@ -13299,6 +13478,7 @@
     "getMyEntitlements",
     "getMySubscription",
     "getOfficialAccount",
+    "getOfficialInsights",
     "getOfficialMedia",
     "getOfficialNumberProfile",
     "getOfficialProfile",

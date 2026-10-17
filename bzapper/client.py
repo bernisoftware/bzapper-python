@@ -1599,6 +1599,23 @@ class Client:
 
     # -- official numbers ------------------------------------------------------
 
+    def get_official_insights(
+        self, days: Optional[int] = None, from_: Optional[str] = None, to: Optional[str] = None
+    ) -> JSONDict:
+        """Estimated Meta cost and official-rail KPIs for a period. ``GET /official/insights``
+
+        What Meta will charge (bZapper charges only the subscription), per
+        category, with the month projection and the previous period; plus
+        delivery/read rates, free messages, ad conversations, marketing
+        opt-outs, templates, failure reasons and numbers' quality/limit.
+
+        Args:
+            days: Period ending now (7, 30, 90…).
+            from_: Period start, RFC 3339 (overrides ``days``).
+            to: Period end, RFC 3339.
+        """
+        return self._request("GET", "/official/insights", params={"days": days, "from": from_, "to": to})
+
     def upload_official_media(
         self,
         file: FileInput,
