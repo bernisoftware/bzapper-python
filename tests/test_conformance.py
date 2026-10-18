@@ -291,6 +291,7 @@ OPS: Dict[str, Call] = {
     "listCampaigns": client("list_campaigns"),
     "createCampaign": client("create_campaign"),
     "estimateCampaign": client("estimate_campaign"),
+    "estimateCampaignMetaCost": client("estimate_campaign_meta_cost"),
     "getCampaignEligibility": client("get_campaign_eligibility"),
     "uploadCampaignMedia": upload("upload_campaign_media"),
     "getCampaign": client("get_campaign"),

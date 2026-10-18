@@ -7686,6 +7686,57 @@
         "body": null,
         "path": {},
         "query": {
+          "language": "language-1",
+          "recipients": 1,
+          "template": "template-1"
+        }
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/campaigns/meta-cost",
+            "query": {
+              "language": "language-1",
+              "recipients": "1",
+              "template": "template-1"
+            }
+          },
+          "response": {
+            "body": {
+              "category": "marketing",
+              "currency": "BRL",
+              "daily_limit": 1,
+              "days_needed": 1,
+              "total": 1.5,
+              "unit_price": 1.5
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "category": "marketing",
+          "currency": "BRL",
+          "daily_limit": 1,
+          "days_needed": 1,
+          "total": 1.5,
+          "unit_price": 1.5
+        }
+      },
+      "id": "estimateCampaignMetaCost/basic",
+      "multipart": false,
+      "op": "estimateCampaignMetaCost"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
+        "query": {
           "pool_id": "00000000-0000-4000-8000-000000000001"
         }
       },
@@ -10331,6 +10382,7 @@
               "business_review": "business_review-1",
               "can_send": true,
               "connected": true,
+              "currency": "currency-1",
               "display_number": "display_number-1",
               "live": true,
               "messaging_limit": "TIER_1K",
@@ -10353,6 +10405,7 @@
           "business_review": "business_review-1",
           "can_send": true,
           "connected": true,
+          "currency": "currency-1",
           "display_number": "display_number-1",
           "live": true,
           "messaging_limit": "TIER_1K",
@@ -14611,6 +14664,7 @@
     "editMessage",
     "editTemplate",
     "estimateCampaign",
+    "estimateCampaignMetaCost",
     "exchangeConnectCode",
     "forwardMessage",
     "getAccountUsage",

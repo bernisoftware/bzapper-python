@@ -1116,6 +1116,21 @@ class Client:
             params={"recipients": recipients, "pacing": pacing, "pool_id": pool_id},
         )
 
+    def estimate_campaign_meta_cost(
+        self, recipients: int, template: str, *, language: Optional[str] = None
+    ) -> JSONDict:
+        """What Meta will charge for a template campaign. ``GET /campaigns/meta-cost``
+
+        Official rail. From the template category and Meta's Brazil rate card:
+        charged by Meta on your card (bZapper charges only the subscription),
+        plus the days the number's daily new-contact limit requires.
+        """
+        return self._request(
+            "GET",
+            "/campaigns/meta-cost",
+            params={"recipients": recipients, "template": template, "language": language},
+        )
+
     def get_campaign_eligibility(self, *, pool_id: Optional[str] = None) -> JSONDict:
         """Per-number campaign eligibility (connection and age). ``GET /campaigns/eligibility``
 
