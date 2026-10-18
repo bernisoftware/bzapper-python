@@ -1721,6 +1721,14 @@ class Client:
             idempotency_key=idempotency_key,
         )
 
+    def get_official_number_health(self, number_id: str) -> JSONDict:
+        """Quality and messaging-limit history of a number. ``GET /official/numbers/{id}/health``
+
+        Every change, newest first — what explains why the limit dropped or when
+        quality worsened. Returns ``{quality_rating, messaging_limit, history}``.
+        """
+        return self._request("GET", f"/official/numbers/{self._seg(number_id, 'number_id')}/health")
+
     def set_default_official_number(
         self, number_id: str, *, idempotency_key: Optional[str] = None
     ) -> None:

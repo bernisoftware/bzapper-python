@@ -250,6 +250,7 @@ OPS: Dict[str, Call] = {
     "listAvailableOfficialNumbers": client("list_available_official_numbers"),
     "addOfficialNumber": client("add_official_number"),
     "setDefaultOfficialNumber": client("set_default_official_number"),
+    "getOfficialNumberHealth": client("get_official_number_health"),
     "disconnectOfficialNumber": client("disconnect_official_number"),
     "getOfficialProfile": client("get_official_profile"),
     "updateOfficialProfile": client("update_official_profile"),

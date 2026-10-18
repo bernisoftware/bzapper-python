@@ -12797,6 +12797,57 @@
         {
           "request": {
             "body": null,
+            "method": "GET",
+            "path": "/official/numbers/00000000-0000-4000-8000-000000000001/health",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "history": [
+                {
+                  "at": "2026-09-21T12:00:00Z",
+                  "messaging_limit": "messaging_limit-1",
+                  "quality_rating": "quality_rating-1"
+                }
+              ],
+              "messaging_limit": "TIER_1K",
+              "quality_rating": "GREEN"
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "history": [
+            {
+              "at": "2026-09-21T12:00:00Z",
+              "messaging_limit": "messaging_limit-1",
+              "quality_rating": "quality_rating-1"
+            }
+          ],
+          "messaging_limit": "TIER_1K",
+          "quality_rating": "GREEN"
+        }
+      },
+      "id": "getOfficialNumberHealth/basic",
+      "multipart": false,
+      "op": "getOfficialNumberHealth"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
             "method": "DELETE",
             "path": "/official/numbers/00000000-0000-4000-8000-000000000001",
             "query": {}
@@ -14687,6 +14738,7 @@
     "getOfficialAccount",
     "getOfficialInsights",
     "getOfficialMedia",
+    "getOfficialNumberHealth",
     "getOfficialNumberProfile",
     "getOfficialProfile",
     "getOfficialSignupConfig",
