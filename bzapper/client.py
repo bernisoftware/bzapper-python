@@ -2249,7 +2249,7 @@ class Client:
         """Choose the APPROVED template for the verification code. ``PUT /templates/otp``
 
         Authentication or, until Meta releases it, a provisional Utility template with
-        a copy-code button; anything else is refused (422 ``template_not_otp_capable``).
+        one body variable for the code; anything else is refused (422 ``template_not_otp_capable``).
         ``None`` or ``""`` clears the choice.
         """
         self._request("PUT", "/templates/otp", body={"template_id": template_id or ""}, idempotency_key=idempotency_key)
