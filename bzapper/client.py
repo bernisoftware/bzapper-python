@@ -2099,6 +2099,14 @@ class Client:
             idempotency_key=idempotency_key,
         )
 
+    def get_template_analytics(self, *, days: Optional[int] = None) -> JSONDict:
+        """Performance of each template. ``GET /templates/analytics``
+
+        Sent, delivered, read and failed by template in the last ``days`` days
+        (1–90, default 30). Returns ``{"days": n, "templates": [...]}``.
+        """
+        return self._request("GET", "/templates/analytics", params={"days": days})
+
     def list_library_templates(
         self,
         *,

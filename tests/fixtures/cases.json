@@ -11180,6 +11180,65 @@
       "args": {
         "body": null,
         "path": {},
+        "query": {
+          "days": 1
+        }
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/templates/analytics",
+            "query": {
+              "days": "1"
+            }
+          },
+          "response": {
+            "body": {
+              "days": 1,
+              "templates": [
+                {
+                  "delivered": 1,
+                  "delivery_rate": 1.5,
+                  "failed": 1,
+                  "name": "name-1",
+                  "read": 1,
+                  "read_rate": 1.5,
+                  "sent": 1
+                }
+              ]
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "days": 1,
+          "templates": [
+            {
+              "delivered": 1,
+              "delivery_rate": 1.5,
+              "failed": 1,
+              "name": "name-1",
+              "read": 1,
+              "read_rate": 1.5,
+              "sent": 1
+            }
+          ]
+        }
+      },
+      "id": "getTemplateAnalytics/basic",
+      "multipart": false,
+      "op": "getTemplateAnalytics"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
         "query": {}
       },
       "exchanges": [
@@ -14055,6 +14114,7 @@
     "getProjectBrand",
     "getProjectsHealth",
     "getTemplate",
+    "getTemplateAnalytics",
     "getUsage",
     "groupInviteLink",
     "importContacts",
