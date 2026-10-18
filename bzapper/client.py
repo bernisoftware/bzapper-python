@@ -3042,12 +3042,15 @@ class Client:
         document: Optional[str] = None,
         document_type: Optional[str] = None,
         address: Optional[Mapping[str, Any]] = None,
+        lid: Optional[str] = None,
         idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Create a contact. ``POST /contacts``
 
         Args:
-            phone: Phone in ``+DDIdigits``.
+            phone: Phone in ``+DDIdigits``, or the WhatsApp LID (``<digits>@lid``).
+            lid: WhatsApp LID; with a phone too, the LID-only contact merges into
+                the phone one.
             address: ``{street, number, complement, district, city, state,
                 country, zip}``.
         """
@@ -3058,6 +3061,7 @@ class Client:
             "document": document,
             "document_type": document_type,
             "address": dict(address) if address is not None else None,
+            "lid": lid,
         }
         return self._request("POST", "/contacts", body=body, idempotency_key=idempotency_key)
 
@@ -3199,13 +3203,15 @@ class Client:
         contacts: Sequence[Mapping[str, Any]],
         *,
         dry_run: Optional[bool] = None,
+        tags: Optional[Sequence[str]] = None,
+        groups: Optional[Sequence[str]] = None,
         idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Import (upsert) contacts in bulk by phone. ``POST /contacts/import``
 
         Up to **1000** rows per call. A new contact is created with
-        ``source: import`` and ``status: pending_validation`` (it still needs
-        opt-in before a campaign); an existing one has only the informed fields
+        ``source: import`` and ``status: pending_validation`` (it can already
+        receive campaigns and becomes ``active`` when the person replies); an existing one has only the informed fields
         updated — a blank value never erases what is there. A suppressed, opted-out
         or blocked contact lands in ``skipped_rows`` and is never resurrected. Tags
         and groups are created on demand. A bad row goes to ``errors`` and does NOT
@@ -3218,6 +3224,8 @@ class Client:
                 district, city, state, zip, country}``. Keys whose value is ``None``
                 are not sent.
             dry_run: ``True`` validates everything and writes nothing.
+            tags: Tags applied to EVERY row (added to each row's own).
+            groups: Contact groups applied to EVERY row.
             idempotency_key: Optional idempotency key (24 h) for this call.
 
         Returns:
@@ -3249,7 +3257,9 @@ class Client:
         return self._request(
             "POST",
             "/contacts/import",
-            body={"contacts": rows, "dry_run": dry_run},
+            body={"contacts": rows, "dry_run": dry_run,
+                  "tags": list(tags) if tags is not None else None,
+                  "groups": list(groups) if groups is not None else None},
             idempotency_key=idempotency_key,
         )
 

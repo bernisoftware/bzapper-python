@@ -7,7 +7,7 @@ Zero runtime dependencies (pure standard library). Python 3.9+.
 ## Install
 
 ```bash
-pip install bzapper==0.15.0
+pip install bzapper==0.15.1
 ```
 
 **Pin the exact version** (`bzapper==X.Y.Z` in `requirements.txt` / `pyproject.toml`).
@@ -322,8 +322,7 @@ client.delete_contact(c["id"])
 ### Bulk import
 
 Up to **1000 rows per call**, upserted by phone. A new contact comes in as
-`source: import` / `status: pending_validation` (it still needs opt-in before a
-campaign); an existing one has only the fields you sent updated — a blank value
+`source: import` / `status: pending_validation` (it can already receive campaigns and becomes active when the person replies); an existing one has only the fields you sent updated — a blank value
 never erases what is there. Tags and groups are created on demand. A bad row is
 reported and **does not** fail the rest of the call: `errors` carries
 `phone_required`, `invalid_phone`, `invalid_email`, `write_failed` or
