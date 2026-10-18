@@ -2060,6 +2060,94 @@ class Client:
             idempotency_key=idempotency_key,
         )
 
+    def edit_template(
+        self,
+        template_id: str,
+        name: str,
+        language: str,
+        category: str,
+        body: Mapping[str, Any],
+        *,
+        header: Optional[Mapping[str, Any]] = None,
+        footer: Optional[str] = None,
+        buttons: Optional[Sequence[Mapping[str, Any]]] = None,
+        code_expiry_minutes: Optional[int] = None,
+        idempotency_key: Optional[str] = None,
+    ) -> JSONDict:
+        """Edit a template that already exists at Meta. ``PUT /templates/{id}``
+
+        Same fields as :meth:`create_template`; ``name`` and ``language`` are the
+        template identity and do not change. Meta allows editing an APPROVED
+        template once every 24 hours and ten times in 30 days, sends it back to
+        review (it returns to ``PENDING`` and does not send until the decision)
+        and keeps the category of an approved template.
+        """
+        spec = {
+            "name": name,
+            "language": language,
+            "category": category,
+            "body": dict(body),
+            "header": dict(header) if header is not None else None,
+            "footer": footer,
+            "buttons": [dict(b) for b in buttons] if buttons is not None else None,
+            "code_expiry_minutes": code_expiry_minutes,
+        }
+        return self._request(
+            "PUT",
+            f"/templates/{self._seg(template_id, 'template_id')}",
+            body=spec,
+            idempotency_key=idempotency_key,
+        )
+
+    def list_library_templates(
+        self,
+        *,
+        search: Optional[str] = None,
+        topic: Optional[str] = None,
+        usecase: Optional[str] = None,
+        industry: Optional[str] = None,
+        language: Optional[str] = None,
+    ) -> JSONDict:
+        """Browse Meta's Template Library. ``GET /templates/library``
+
+        Utility and authentication texts Meta has already approved. A template
+        created from one without changing the text is approved at once. Returns
+        ``{"templates": [...]}``.
+        """
+        return self._request(
+            "GET",
+            "/templates/library",
+            params={"search": search, "topic": topic, "usecase": usecase,
+                    "industry": industry, "language": language},
+        )
+
+    def create_template_from_library(
+        self,
+        library_template_name: str,
+        language: str,
+        *,
+        name: Optional[str] = None,
+        button_inputs: Optional[Sequence[Mapping[str, Any]]] = None,
+        code_expiry_minutes: Optional[int] = None,
+        idempotency_key: Optional[str] = None,
+    ) -> JSONDict:
+        """Create a template from the Template Library. ``POST /templates/library``
+
+        The text is Meta's, unchanged — that is what makes it approved at once.
+        ``button_inputs`` gives what each URL / phone button needs, in order:
+        ``{"type": "url", "url": ..., "url_suffix_example"?}`` or
+        ``{"type": "phone_number", "phone": ...}``. ``code_expiry_minutes`` is for
+        authentication items (default 10).
+        """
+        req = {
+            "library_template_name": library_template_name,
+            "language": language,
+            "name": name,
+            "button_inputs": [dict(b) for b in button_inputs] if button_inputs is not None else None,
+            "code_expiry_minutes": code_expiry_minutes,
+        }
+        return self._request("POST", "/templates/library", body=req, idempotency_key=idempotency_key)
+
     def sync_templates(self, *, idempotency_key: Optional[str] = None) -> JSONDict:
         """Import templates that exist at Meta and not here. ``POST /templates/sync``
 
