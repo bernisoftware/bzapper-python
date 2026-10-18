@@ -7233,6 +7233,17 @@
           "button_variables": [
             "button_variable-1"
           ],
+          "cards": [
+            {
+              "button_variables": [
+                "button_variable-1"
+              ],
+              "header_url": "header_url-1",
+              "variables": [
+                "variable-1"
+              ]
+            }
+          ],
           "client_reference": "client_reference-1",
           "code": "code-1",
           "force": true,
@@ -7247,6 +7258,7 @@
           "mentions": [
             "mention-1"
           ],
+          "offer_expires_at": "2026-09-21T12:00:00Z",
           "pool_id": "00000000-0000-4000-8000-000000000001",
           "quoted_message_id": "00000000-0000-4000-8000-000000000001",
           "quoted_participant": "quoted_participant-1",
@@ -7271,6 +7283,17 @@
               "button_variables": [
                 "button_variable-1"
               ],
+              "cards": [
+                {
+                  "button_variables": [
+                    "button_variable-1"
+                  ],
+                  "header_url": "header_url-1",
+                  "variables": [
+                    "variable-1"
+                  ]
+                }
+              ],
               "client_reference": "client_reference-1",
               "code": "code-1",
               "force": true,
@@ -7285,6 +7308,7 @@
               "mentions": [
                 "mention-1"
               ],
+              "offer_expires_at": "2026-09-21T12:00:00Z",
               "pool_id": "00000000-0000-4000-8000-000000000001",
               "quoted_message_id": "00000000-0000-4000-8000-000000000001",
               "quoted_participant": "quoted_participant-1",
@@ -10387,6 +10411,23 @@
                         "url": "url-1"
                       }
                     ],
+                    "cards": [
+                      {
+                        "body": {
+                          "example": [],
+                          "text": "text-1"
+                        },
+                        "buttons": [
+                          {}
+                        ],
+                        "header": {
+                          "example": "example-1",
+                          "media_url": "media_url-1",
+                          "text": "text-1",
+                          "type": "text"
+                        }
+                      }
+                    ],
                     "category": "MARKETING",
                     "code_expiry_minutes": 1,
                     "footer": "footer-1",
@@ -10397,6 +10438,10 @@
                       "type": "text"
                     },
                     "language": "language-1",
+                    "limited_time_offer": {
+                      "has_expiration": true,
+                      "text": "text-1"
+                    },
                     "name": "name-1"
                   },
                   "status": "PENDING",
@@ -10439,6 +10484,23 @@
                     "url": "url-1"
                   }
                 ],
+                "cards": [
+                  {
+                    "body": {
+                      "example": [],
+                      "text": "text-1"
+                    },
+                    "buttons": [
+                      {}
+                    ],
+                    "header": {
+                      "example": "example-1",
+                      "media_url": "media_url-1",
+                      "text": "text-1",
+                      "type": "text"
+                    }
+                  }
+                ],
                 "category": "MARKETING",
                 "code_expiry_minutes": 1,
                 "footer": "footer-1",
@@ -10449,6 +10511,10 @@
                   "type": "text"
                 },
                 "language": "language-1",
+                "limited_time_offer": {
+                  "has_expiration": true,
+                  "text": "text-1"
+                },
                 "name": "name-1"
               },
               "status": "PENDING",
@@ -10480,6 +10546,31 @@
               "url": "url-1"
             }
           ],
+          "cards": [
+            {
+              "body": {
+                "example": [
+                  "example-1"
+                ],
+                "text": "text-1"
+              },
+              "buttons": [
+                {
+                  "example": "example-1",
+                  "phone": "5511999990000",
+                  "text": "text-1",
+                  "type": "quick_reply",
+                  "url": "url-1"
+                }
+              ],
+              "header": {
+                "example": "example-1",
+                "media_url": "media_url-1",
+                "text": "text-1",
+                "type": "text"
+              }
+            }
+          ],
           "category": "MARKETING",
           "code_expiry_minutes": 1,
           "footer": "footer-1",
@@ -10490,6 +10581,10 @@
             "type": "text"
           },
           "language": "language-1",
+          "limited_time_offer": {
+            "has_expiration": true,
+            "text": "text-1"
+          },
           "name": "name-1"
         },
         "path": {},
@@ -10514,6 +10609,31 @@
                   "url": "url-1"
                 }
               ],
+              "cards": [
+                {
+                  "body": {
+                    "example": [
+                      "example-1"
+                    ],
+                    "text": "text-1"
+                  },
+                  "buttons": [
+                    {
+                      "example": "example-1",
+                      "phone": "5511999990000",
+                      "text": "text-1",
+                      "type": "quick_reply",
+                      "url": "url-1"
+                    }
+                  ],
+                  "header": {
+                    "example": "example-1",
+                    "media_url": "media_url-1",
+                    "text": "text-1",
+                    "type": "text"
+                  }
+                }
+              ],
               "category": "MARKETING",
               "code_expiry_minutes": 1,
               "footer": "footer-1",
@@ -10524,6 +10644,10 @@
                 "type": "text"
               },
               "language": "language-1",
+              "limited_time_offer": {
+                "has_expiration": true,
+                "text": "text-1"
+              },
               "name": "name-1"
             },
             "method": "POST",
@@ -10560,6 +10684,31 @@
                       "url": "url-1"
                     }
                   ],
+                  "cards": [
+                    {
+                      "body": {
+                        "example": [
+                          "example-1"
+                        ],
+                        "text": "text-1"
+                      },
+                      "buttons": [
+                        {
+                          "example": "example-1",
+                          "phone": "5511999990000",
+                          "text": "text-1",
+                          "type": "quick_reply",
+                          "url": "url-1"
+                        }
+                      ],
+                      "header": {
+                        "example": "example-1",
+                        "media_url": "media_url-1",
+                        "text": "text-1",
+                        "type": "text"
+                      }
+                    }
+                  ],
                   "category": "MARKETING",
                   "code_expiry_minutes": 1,
                   "footer": "footer-1",
@@ -10570,6 +10719,10 @@
                     "type": "text"
                   },
                   "language": "language-1",
+                  "limited_time_offer": {
+                    "has_expiration": true,
+                    "text": "text-1"
+                  },
                   "name": "name-1"
                 },
                 "status": "PENDING",
@@ -10613,6 +10766,31 @@
                   "url": "url-1"
                 }
               ],
+              "cards": [
+                {
+                  "body": {
+                    "example": [
+                      "example-1"
+                    ],
+                    "text": "text-1"
+                  },
+                  "buttons": [
+                    {
+                      "example": "example-1",
+                      "phone": "5511999990000",
+                      "text": "text-1",
+                      "type": "quick_reply",
+                      "url": "url-1"
+                    }
+                  ],
+                  "header": {
+                    "example": "example-1",
+                    "media_url": "media_url-1",
+                    "text": "text-1",
+                    "type": "text"
+                  }
+                }
+              ],
               "category": "MARKETING",
               "code_expiry_minutes": 1,
               "footer": "footer-1",
@@ -10623,6 +10801,10 @@
                 "type": "text"
               },
               "language": "language-1",
+              "limited_time_offer": {
+                "has_expiration": true,
+                "text": "text-1"
+              },
               "name": "name-1"
             },
             "status": "PENDING",
@@ -10677,6 +10859,31 @@
                     "url": "url-1"
                   }
                 ],
+                "cards": [
+                  {
+                    "body": {
+                      "example": [
+                        "example-1"
+                      ],
+                      "text": "text-1"
+                    },
+                    "buttons": [
+                      {
+                        "example": "example-1",
+                        "phone": "5511999990000",
+                        "text": "text-1",
+                        "type": "quick_reply",
+                        "url": "url-1"
+                      }
+                    ],
+                    "header": {
+                      "example": "example-1",
+                      "media_url": "media_url-1",
+                      "text": "text-1",
+                      "type": "text"
+                    }
+                  }
+                ],
                 "category": "MARKETING",
                 "code_expiry_minutes": 1,
                 "footer": "footer-1",
@@ -10687,6 +10894,10 @@
                   "type": "text"
                 },
                 "language": "language-1",
+                "limited_time_offer": {
+                  "has_expiration": true,
+                  "text": "text-1"
+                },
                 "name": "name-1"
               },
               "status": "PENDING",
@@ -10725,6 +10936,31 @@
                 "url": "url-1"
               }
             ],
+            "cards": [
+              {
+                "body": {
+                  "example": [
+                    "example-1"
+                  ],
+                  "text": "text-1"
+                },
+                "buttons": [
+                  {
+                    "example": "example-1",
+                    "phone": "5511999990000",
+                    "text": "text-1",
+                    "type": "quick_reply",
+                    "url": "url-1"
+                  }
+                ],
+                "header": {
+                  "example": "example-1",
+                  "media_url": "media_url-1",
+                  "text": "text-1",
+                  "type": "text"
+                }
+              }
+            ],
             "category": "MARKETING",
             "code_expiry_minutes": 1,
             "footer": "footer-1",
@@ -10735,6 +10971,10 @@
               "type": "text"
             },
             "language": "language-1",
+            "limited_time_offer": {
+              "has_expiration": true,
+              "text": "text-1"
+            },
             "name": "name-1"
           },
           "status": "PENDING",
@@ -10764,6 +11004,31 @@
               "url": "url-1"
             }
           ],
+          "cards": [
+            {
+              "body": {
+                "example": [
+                  "example-1"
+                ],
+                "text": "text-1"
+              },
+              "buttons": [
+                {
+                  "example": "example-1",
+                  "phone": "5511999990000",
+                  "text": "text-1",
+                  "type": "quick_reply",
+                  "url": "url-1"
+                }
+              ],
+              "header": {
+                "example": "example-1",
+                "media_url": "media_url-1",
+                "text": "text-1",
+                "type": "text"
+              }
+            }
+          ],
           "category": "MARKETING",
           "code_expiry_minutes": 1,
           "footer": "footer-1",
@@ -10774,6 +11039,10 @@
             "type": "text"
           },
           "language": "language-1",
+          "limited_time_offer": {
+            "has_expiration": true,
+            "text": "text-1"
+          },
           "name": "name-1"
         },
         "path": {
@@ -10800,6 +11069,31 @@
                   "url": "url-1"
                 }
               ],
+              "cards": [
+                {
+                  "body": {
+                    "example": [
+                      "example-1"
+                    ],
+                    "text": "text-1"
+                  },
+                  "buttons": [
+                    {
+                      "example": "example-1",
+                      "phone": "5511999990000",
+                      "text": "text-1",
+                      "type": "quick_reply",
+                      "url": "url-1"
+                    }
+                  ],
+                  "header": {
+                    "example": "example-1",
+                    "media_url": "media_url-1",
+                    "text": "text-1",
+                    "type": "text"
+                  }
+                }
+              ],
               "category": "MARKETING",
               "code_expiry_minutes": 1,
               "footer": "footer-1",
@@ -10810,6 +11104,10 @@
                 "type": "text"
               },
               "language": "language-1",
+              "limited_time_offer": {
+                "has_expiration": true,
+                "text": "text-1"
+              },
               "name": "name-1"
             },
             "method": "PUT",
@@ -10846,6 +11144,31 @@
                       "url": "url-1"
                     }
                   ],
+                  "cards": [
+                    {
+                      "body": {
+                        "example": [
+                          "example-1"
+                        ],
+                        "text": "text-1"
+                      },
+                      "buttons": [
+                        {
+                          "example": "example-1",
+                          "phone": "5511999990000",
+                          "text": "text-1",
+                          "type": "quick_reply",
+                          "url": "url-1"
+                        }
+                      ],
+                      "header": {
+                        "example": "example-1",
+                        "media_url": "media_url-1",
+                        "text": "text-1",
+                        "type": "text"
+                      }
+                    }
+                  ],
                   "category": "MARKETING",
                   "code_expiry_minutes": 1,
                   "footer": "footer-1",
@@ -10856,6 +11179,10 @@
                     "type": "text"
                   },
                   "language": "language-1",
+                  "limited_time_offer": {
+                    "has_expiration": true,
+                    "text": "text-1"
+                  },
                   "name": "name-1"
                 },
                 "status": "PENDING",
@@ -10899,6 +11226,31 @@
                   "url": "url-1"
                 }
               ],
+              "cards": [
+                {
+                  "body": {
+                    "example": [
+                      "example-1"
+                    ],
+                    "text": "text-1"
+                  },
+                  "buttons": [
+                    {
+                      "example": "example-1",
+                      "phone": "5511999990000",
+                      "text": "text-1",
+                      "type": "quick_reply",
+                      "url": "url-1"
+                    }
+                  ],
+                  "header": {
+                    "example": "example-1",
+                    "media_url": "media_url-1",
+                    "text": "text-1",
+                    "type": "text"
+                  }
+                }
+              ],
               "category": "MARKETING",
               "code_expiry_minutes": 1,
               "footer": "footer-1",
@@ -10909,6 +11261,10 @@
                 "type": "text"
               },
               "language": "language-1",
+              "limited_time_offer": {
+                "has_expiration": true,
+                "text": "text-1"
+              },
               "name": "name-1"
             },
             "status": "PENDING",
@@ -11104,6 +11460,31 @@
                       "url": "url-1"
                     }
                   ],
+                  "cards": [
+                    {
+                      "body": {
+                        "example": [
+                          "example-1"
+                        ],
+                        "text": "text-1"
+                      },
+                      "buttons": [
+                        {
+                          "example": "example-1",
+                          "phone": "5511999990000",
+                          "text": "text-1",
+                          "type": "quick_reply",
+                          "url": "url-1"
+                        }
+                      ],
+                      "header": {
+                        "example": "example-1",
+                        "media_url": "media_url-1",
+                        "text": "text-1",
+                        "type": "text"
+                      }
+                    }
+                  ],
                   "category": "MARKETING",
                   "code_expiry_minutes": 1,
                   "footer": "footer-1",
@@ -11114,6 +11495,10 @@
                     "type": "text"
                   },
                   "language": "language-1",
+                  "limited_time_offer": {
+                    "has_expiration": true,
+                    "text": "text-1"
+                  },
                   "name": "name-1"
                 },
                 "status": "PENDING",
@@ -11154,6 +11539,31 @@
                   "url": "url-1"
                 }
               ],
+              "cards": [
+                {
+                  "body": {
+                    "example": [
+                      "example-1"
+                    ],
+                    "text": "text-1"
+                  },
+                  "buttons": [
+                    {
+                      "example": "example-1",
+                      "phone": "5511999990000",
+                      "text": "text-1",
+                      "type": "quick_reply",
+                      "url": "url-1"
+                    }
+                  ],
+                  "header": {
+                    "example": "example-1",
+                    "media_url": "media_url-1",
+                    "text": "text-1",
+                    "type": "text"
+                  }
+                }
+              ],
               "category": "MARKETING",
               "code_expiry_minutes": 1,
               "footer": "footer-1",
@@ -11164,6 +11574,10 @@
                 "type": "text"
               },
               "language": "language-1",
+              "limited_time_offer": {
+                "has_expiration": true,
+                "text": "text-1"
+              },
               "name": "name-1"
             },
             "status": "PENDING",
@@ -11309,6 +11723,31 @@
                       "url": "url-1"
                     }
                   ],
+                  "cards": [
+                    {
+                      "body": {
+                        "example": [
+                          "example-1"
+                        ],
+                        "text": "text-1"
+                      },
+                      "buttons": [
+                        {
+                          "example": "example-1",
+                          "phone": "5511999990000",
+                          "text": "text-1",
+                          "type": "quick_reply",
+                          "url": "url-1"
+                        }
+                      ],
+                      "header": {
+                        "example": "example-1",
+                        "media_url": "media_url-1",
+                        "text": "text-1",
+                        "type": "text"
+                      }
+                    }
+                  ],
                   "category": "MARKETING",
                   "code_expiry_minutes": 1,
                   "footer": "footer-1",
@@ -11319,6 +11758,10 @@
                     "type": "text"
                   },
                   "language": "language-1",
+                  "limited_time_offer": {
+                    "has_expiration": true,
+                    "text": "text-1"
+                  },
                   "name": "name-1"
                 },
                 "status": "PENDING",
@@ -11359,6 +11802,31 @@
                   "url": "url-1"
                 }
               ],
+              "cards": [
+                {
+                  "body": {
+                    "example": [
+                      "example-1"
+                    ],
+                    "text": "text-1"
+                  },
+                  "buttons": [
+                    {
+                      "example": "example-1",
+                      "phone": "5511999990000",
+                      "text": "text-1",
+                      "type": "quick_reply",
+                      "url": "url-1"
+                    }
+                  ],
+                  "header": {
+                    "example": "example-1",
+                    "media_url": "media_url-1",
+                    "text": "text-1",
+                    "type": "text"
+                  }
+                }
+              ],
               "category": "MARKETING",
               "code_expiry_minutes": 1,
               "footer": "footer-1",
@@ -11369,6 +11837,10 @@
                 "type": "text"
               },
               "language": "language-1",
+              "limited_time_offer": {
+                "has_expiration": true,
+                "text": "text-1"
+              },
               "name": "name-1"
             },
             "status": "PENDING",
@@ -11463,6 +11935,31 @@
                       "url": "url-1"
                     }
                   ],
+                  "cards": [
+                    {
+                      "body": {
+                        "example": [
+                          "example-1"
+                        ],
+                        "text": "text-1"
+                      },
+                      "buttons": [
+                        {
+                          "example": "example-1",
+                          "phone": "5511999990000",
+                          "text": "text-1",
+                          "type": "quick_reply",
+                          "url": "url-1"
+                        }
+                      ],
+                      "header": {
+                        "example": "example-1",
+                        "media_url": "media_url-1",
+                        "text": "text-1",
+                        "type": "text"
+                      }
+                    }
+                  ],
                   "category": "MARKETING",
                   "code_expiry_minutes": 1,
                   "footer": "footer-1",
@@ -11473,6 +11970,10 @@
                     "type": "text"
                   },
                   "language": "language-1",
+                  "limited_time_offer": {
+                    "has_expiration": true,
+                    "text": "text-1"
+                  },
                   "name": "name-1"
                 },
                 "status": "PENDING",
@@ -11521,6 +12022,31 @@
                   "url": "url-1"
                 }
               ],
+              "cards": [
+                {
+                  "body": {
+                    "example": [
+                      "example-1"
+                    ],
+                    "text": "text-1"
+                  },
+                  "buttons": [
+                    {
+                      "example": "example-1",
+                      "phone": "5511999990000",
+                      "text": "text-1",
+                      "type": "quick_reply",
+                      "url": "url-1"
+                    }
+                  ],
+                  "header": {
+                    "example": "example-1",
+                    "media_url": "media_url-1",
+                    "text": "text-1",
+                    "type": "text"
+                  }
+                }
+              ],
               "category": "MARKETING",
               "code_expiry_minutes": 1,
               "footer": "footer-1",
@@ -11531,6 +12057,10 @@
                 "type": "text"
               },
               "language": "language-1",
+              "limited_time_offer": {
+                "has_expiration": true,
+                "text": "text-1"
+              },
               "name": "name-1"
             },
             "status": "PENDING",

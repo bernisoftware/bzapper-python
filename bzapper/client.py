@@ -1906,6 +1906,8 @@ class Client:
         header_variables: Optional[Sequence[str]] = None,
         button_variables: Optional[Sequence[str]] = None,
         code: Optional[str] = None,
+        offer_expires_at: Optional[str] = None,
+        cards: Optional[Sequence[Mapping[str, Any]]] = None,
         instance_id: Optional[str] = None,
         pool_id: Optional[str] = None,
         quoted_message_id: Optional[str] = None,
@@ -1939,6 +1941,10 @@ class Client:
             button_variables: Values for dynamic URL buttons, by button index.
             code: AUTHENTICATION templates only. Meta requires the code both in
                 the body and in the copy-code button; the API places it in both.
+            offer_expires_at: Limited-time offer with expiration: the deadline of
+                this send (RFC 3339).
+            cards: Carousel: the values of each card, in order — ``{"header_url"?,
+                "variables"?, "button_variables"?}``.
 
         Returns:
             The queued-message object (same as :meth:`send_text`).
@@ -1967,6 +1973,8 @@ class Client:
             list(button_variables) if button_variables is not None else None
         )
         payload["code"] = code
+        payload["offer_expires_at"] = offer_expires_at
+        payload["cards"] = [dict(c) for c in cards] if cards is not None else None
         return self._request(
             "POST",
             "/messages/template",
@@ -1997,6 +2005,8 @@ class Client:
         footer: Optional[str] = None,
         buttons: Optional[Sequence[Mapping[str, Any]]] = None,
         code_expiry_minutes: Optional[int] = None,
+        limited_time_offer: Optional[Mapping[str, Any]] = None,
+        cards: Optional[Sequence[Mapping[str, Any]]] = None,
         idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Create a template and submit it to Meta for review. ``POST /templates``
@@ -2025,6 +2035,13 @@ class Client:
                 "text": ..., "url"?, "phone"?, "example"?}``.
             code_expiry_minutes: ``AUTHENTICATION`` only (1–90). In that category
                 Meta writes the text and adds the copy-code button.
+            limited_time_offer: ``MARKETING`` only — ``{"text": "Só hoje!",
+                "has_expiration": True}``: a badge (up to 16 characters) and, with
+                ``has_expiration``, a countdown to ``offer_expires_at`` of each send.
+            cards: Carousel, 2 to 10 — each ``{"header": {"type": "image"|"video",
+                "media_url": ...}, "body": {...}, "buttons": [...]}``. The template
+                keeps only the opening ``body``; same media type and buttons on all
+                cards (Meta rule).
 
         Returns:
             ``{"template": ..., "advice": [...]}``. ``advice`` lists things that did
@@ -2041,6 +2058,8 @@ class Client:
             "footer": footer,
             "buttons": [dict(b) for b in buttons] if buttons is not None else None,
             "code_expiry_minutes": code_expiry_minutes,
+            "limited_time_offer": dict(limited_time_offer) if limited_time_offer is not None else None,
+            "cards": [dict(c) for c in cards] if cards is not None else None,
         }
         return self._request("POST", "/templates", body=spec, idempotency_key=idempotency_key)
 
@@ -2072,6 +2091,8 @@ class Client:
         footer: Optional[str] = None,
         buttons: Optional[Sequence[Mapping[str, Any]]] = None,
         code_expiry_minutes: Optional[int] = None,
+        limited_time_offer: Optional[Mapping[str, Any]] = None,
+        cards: Optional[Sequence[Mapping[str, Any]]] = None,
         idempotency_key: Optional[str] = None,
     ) -> JSONDict:
         """Edit a template that already exists at Meta. ``PUT /templates/{id}``
@@ -2091,6 +2112,8 @@ class Client:
             "footer": footer,
             "buttons": [dict(b) for b in buttons] if buttons is not None else None,
             "code_expiry_minutes": code_expiry_minutes,
+            "limited_time_offer": dict(limited_time_offer) if limited_time_offer is not None else None,
+            "cards": [dict(c) for c in cards] if cards is not None else None,
         }
         return self._request(
             "PUT",
