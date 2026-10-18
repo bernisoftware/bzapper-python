@@ -11645,6 +11645,163 @@
     },
     {
       "args": {
+        "body": {
+          "body": {
+            "example": [
+              "example-1"
+            ],
+            "text": "text-1"
+          },
+          "buttons": [
+            {
+              "example": "example-1",
+              "phone": "5511999990000",
+              "text": "text-1",
+              "type": "quick_reply",
+              "url": "url-1"
+            }
+          ],
+          "cards": [
+            {
+              "body": {
+                "example": [
+                  "example-1"
+                ],
+                "text": "text-1"
+              },
+              "buttons": [
+                {
+                  "example": "example-1",
+                  "phone": "5511999990000",
+                  "text": "text-1",
+                  "type": "quick_reply",
+                  "url": "url-1"
+                }
+              ],
+              "header": {
+                "example": "example-1",
+                "media_url": "media_url-1",
+                "text": "text-1",
+                "type": "text"
+              }
+            }
+          ],
+          "category": "MARKETING",
+          "code_expiry_minutes": 1,
+          "footer": "footer-1",
+          "header": {
+            "example": "example-1",
+            "media_url": "media_url-1",
+            "text": "text-1",
+            "type": "text"
+          },
+          "language": "language-1",
+          "limited_time_offer": {
+            "has_expiration": true,
+            "text": "text-1"
+          },
+          "name": "name-1"
+        },
+        "path": {},
+        "query": {
+          "id": "00000000-0000-4000-8000-000000000001"
+        }
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": {
+              "body": {
+                "example": [
+                  "example-1"
+                ],
+                "text": "text-1"
+              },
+              "buttons": [
+                {
+                  "example": "example-1",
+                  "phone": "5511999990000",
+                  "text": "text-1",
+                  "type": "quick_reply",
+                  "url": "url-1"
+                }
+              ],
+              "cards": [
+                {
+                  "body": {
+                    "example": [
+                      "example-1"
+                    ],
+                    "text": "text-1"
+                  },
+                  "buttons": [
+                    {
+                      "example": "example-1",
+                      "phone": "5511999990000",
+                      "text": "text-1",
+                      "type": "quick_reply",
+                      "url": "url-1"
+                    }
+                  ],
+                  "header": {
+                    "example": "example-1",
+                    "media_url": "media_url-1",
+                    "text": "text-1",
+                    "type": "text"
+                  }
+                }
+              ],
+              "category": "MARKETING",
+              "code_expiry_minutes": 1,
+              "footer": "footer-1",
+              "header": {
+                "example": "example-1",
+                "media_url": "media_url-1",
+                "text": "text-1",
+                "type": "text"
+              },
+              "language": "language-1",
+              "limited_time_offer": {
+                "has_expiration": true,
+                "text": "text-1"
+              },
+              "name": "name-1"
+            },
+            "method": "POST",
+            "path": "/templates/validate",
+            "query": {
+              "id": "00000000-0000-4000-8000-000000000001"
+            }
+          },
+          "response": {
+            "body": {
+              "advice": [
+                "advice-1"
+              ],
+              "problem": "problem-1",
+              "valid": true
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "advice": [
+            "advice-1"
+          ],
+          "problem": "problem-1",
+          "valid": true
+        }
+      },
+      "id": "validateTemplate/basic",
+      "multipart": false,
+      "op": "validateTemplate"
+    },
+    {
+      "args": {
         "body": null,
         "path": {},
         "query": {
@@ -14861,7 +15018,8 @@
     "uploadOfficialNumberProfilePhoto",
     "uploadOfficialProfilePhoto",
     "uploadProjectLogo",
-    "uploadTemplateMedia"
+    "uploadTemplateMedia",
+    "validateTemplate"
   ],
   "sdk_excluded_ops": [
     "cancelAccountDeletion",

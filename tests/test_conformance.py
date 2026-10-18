@@ -269,6 +269,7 @@ OPS: Dict[str, Call] = {
     "syncTemplates": client("sync_templates"),
     "editTemplate": client("edit_template"),
     "getTemplateAnalytics": client("get_template_analytics"),
+    "validateTemplate": client("validate_template"),
     "listLibraryTemplates": client("list_library_templates"),
     "createTemplateFromLibrary": client("create_template_from_library"),
     "uploadTemplateMedia": upload("upload_template_media"),

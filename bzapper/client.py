@@ -2145,6 +2145,37 @@ class Client:
             idempotency_key=idempotency_key,
         )
 
+    def validate_template(
+        self,
+        name: str,
+        language: str,
+        category: str,
+        body: Mapping[str, Any],
+        *,
+        header: Optional[Mapping[str, Any]] = None,
+        footer: Optional[str] = None,
+        buttons: Optional[Sequence[Mapping[str, Any]]] = None,
+        code_expiry_minutes: Optional[int] = None,
+        limited_time_offer: Optional[Mapping[str, Any]] = None,
+        cards: Optional[Sequence[Mapping[str, Any]]] = None,
+        id: Optional[str] = None,
+    ) -> JSONDict:
+        """Check a template against Meta's rules without submitting. ``POST /templates/validate``
+
+        Same validation as :meth:`create_template`, with no call to Meta and no
+        submission spent. ``id`` checks an edit. Returns ``{valid, problem?, advice?}``.
+        """
+        spec = {
+            "name": name, "language": language, "category": category, "body": dict(body),
+            "header": dict(header) if header is not None else None,
+            "footer": footer,
+            "buttons": [dict(b) for b in buttons] if buttons is not None else None,
+            "code_expiry_minutes": code_expiry_minutes,
+            "limited_time_offer": dict(limited_time_offer) if limited_time_offer is not None else None,
+            "cards": [dict(c) for c in cards] if cards is not None else None,
+        }
+        return self._request("POST", "/templates/validate", body=spec, params={"id": id})
+
     def get_template_analytics(self, *, days: Optional[int] = None) -> JSONDict:
         """Performance of each template. ``GET /templates/analytics``
 
@@ -2248,8 +2279,8 @@ class Client:
     def set_otp_template(self, template_id: Optional[str], *, idempotency_key: Optional[str] = None) -> None:
         """Choose the APPROVED template for the verification code. ``PUT /templates/otp``
 
-        Authentication or, until Meta releases it, a provisional Utility template with
-        one body variable for the code; anything else is refused (422 ``template_not_otp_capable``).
+        Authentication or, until Meta releases it, a provisional one (Marketing with a
+        copy-code button, or Utility with one body variable for the code); anything else is refused (422 ``template_not_otp_capable``).
         ``None`` or ``""`` clears the choice.
         """
         self._request("PUT", "/templates/otp", body={"template_id": template_id or ""}, idempotency_key=idempotency_key)
