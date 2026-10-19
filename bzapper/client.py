@@ -3044,6 +3044,7 @@ class Client:
         address: Optional[Mapping[str, Any]] = None,
         lid: Optional[str] = None,
         idempotency_key: Optional[str] = None,
+        bsuid: Optional[str] = None,
     ) -> JSONDict:
         """Create a contact. ``POST /contacts``
 
@@ -3051,6 +3052,8 @@ class Client:
             phone: Phone in ``+DDIdigits``, or the WhatsApp LID (``<digits>@lid``).
             lid: WhatsApp LID; with a phone too, the LID-only contact merges into
                 the phone one.
+            bsuid: Meta business-scoped user ID (official rail); with a phone too,
+                it is stored on the phone contact.
             address: ``{street, number, complement, district, city, state,
                 country, zip}``.
         """
@@ -3062,6 +3065,7 @@ class Client:
             "document_type": document_type,
             "address": dict(address) if address is not None else None,
             "lid": lid,
+            "bsuid": bsuid,
         }
         return self._request("POST", "/contacts", body=body, idempotency_key=idempotency_key)
 

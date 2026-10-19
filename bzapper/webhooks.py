@@ -101,6 +101,8 @@ class Sender:
     name: Optional[str] = None
     #: Phone (``+DDIdigits``) when known; ``None`` if the person only arrived by @lid.
     phone: Optional[str] = None
+    #: Meta business-scoped user ID (official rail).
+    bsuid: Optional[str] = None
 
 
 @dataclass
@@ -151,7 +153,7 @@ class WebhookEvent:
             instance_id=d.get("instance_id"),
             client_reference=d.get("client_reference"),
             group=Group(jid=g.get("jid"), name=g.get("name")) if isinstance(g, dict) else None,
-            sender=Sender(jid=s.get("jid"), lid=s.get("lid"), name=s.get("name"), phone=s.get("phone")) if isinstance(s, dict) else None,
+            sender=Sender(jid=s.get("jid"), lid=s.get("lid"), name=s.get("name"), phone=s.get("phone"), bsuid=s.get("bsuid")) if isinstance(s, dict) else None,
             mentions=list(d.get("mentions") or []),
             payload=dict(d.get("payload") or {}),
             raw=d,
