@@ -1353,6 +1353,21 @@ class Client:
         """Fetch a single instance by ID."""
         return self._request("GET", f"/instances/{self._seg(instance_id, 'instance_id')}")
 
+    def get_instance_uptime(self, instance_id: str) -> JSONDict:
+        """Number availability. ``GET /instances/{id}/uptime``
+
+        Share of time connected (warming counts as connected) over the last 24
+        hours, 7 days and 30 days, since when the number is in its current
+        status, and the 20 latest status changes. Returns ``instance_id``,
+        ``status``, ``since``, ``tracked_since``, ``windows`` (``{"24h", "7d",
+        "30d"}`` — percent 0–100, ``None`` while the history does not cover the
+        window yet) and ``events`` (``[{"status", "reason", "at"}]``, newest
+        first).
+        """
+        return self._request(
+            "GET", f"/instances/{self._seg(instance_id, 'instance_id')}/uptime"
+        )
+
     def delete_instance(
         self, instance_id: str, *, idempotency_key: Optional[str] = None
     ) -> None:
@@ -2444,6 +2459,31 @@ class Client:
         """
         path = f"/me/connections/{self._seg(connection_id, 'connection_id')}/standalone"
         return self._request("POST", path, idempotency_key=idempotency_key)
+
+    # -- AI connector (MCP) ---------------------------------------------------
+
+    def list_ai_connections(self) -> JSONDict:
+        """List the AI apps connected to this account. ``GET /ai-connections``
+
+        Active connections of the AI connector (MCP), newest first. An admin sees
+        every connection of the account; an agent only their own; an API key
+        without a person behind it sees them only if it is an admin key. Returns
+        ``{"data": [...]}``; each item has ``id``, ``client_name``, ``user_id``,
+        ``user_name``, ``user_email``, ``user_role``, ``project_ids``, ``scopes``,
+        ``created_at`` and ``last_used_at`` (absent until the first call).
+        """
+        return self._request("GET", "/ai-connections")
+
+    def revoke_ai_connection(
+        self, connection_id: str, *, idempotency_key: Optional[str] = None
+    ) -> None:
+        """Revoke an AI app's access. ``DELETE /ai-connections/{id}``
+
+        Its tokens stop working on the next call. An admin can revoke any
+        connection of the account; an agent, only their own.
+        """
+        path = f"/ai-connections/{self._seg(connection_id, 'connection_id')}"
+        return self._request("DELETE", path, idempotency_key=idempotency_key)
 
     # -- webhooks (management; to RECEIVE+process events use bzapper.webhooks) --
 

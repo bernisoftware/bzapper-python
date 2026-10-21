@@ -5735,6 +5735,71 @@
         "path": {
           "id": "00000000-0000-4000-8000-000000000001"
         },
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/instances/00000000-0000-4000-8000-000000000001/uptime",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "events": [
+                {
+                  "at": "2026-09-21T12:00:00Z",
+                  "reason": "reason-1",
+                  "status": "status-1"
+                }
+              ],
+              "instance_id": "00000000-0000-4000-8000-000000000001",
+              "since": "2026-09-21T12:00:00Z",
+              "status": "status-1",
+              "tracked_since": "2026-09-21T12:00:00Z",
+              "windows": {
+                "24h": 1.5,
+                "30d": 1.5,
+                "7d": 1.5
+              }
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "events": [
+            {
+              "at": "2026-09-21T12:00:00Z",
+              "reason": "reason-1",
+              "status": "status-1"
+            }
+          ],
+          "instance_id": "00000000-0000-4000-8000-000000000001",
+          "since": "2026-09-21T12:00:00Z",
+          "status": "status-1",
+          "tracked_since": "2026-09-21T12:00:00Z",
+          "windows": {
+            "24h": 1.5,
+            "30d": 1.5,
+            "7d": 1.5
+          }
+        }
+      },
+      "id": "getInstanceUptime/basic",
+      "multipart": false,
+      "op": "getInstanceUptime"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
         "query": {
           "method": "qr"
         }
@@ -10054,6 +10119,104 @@
       "id": "revokeConnectedApp/basic",
       "multipart": false,
       "op": "revokeConnectedApp"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {},
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "GET",
+            "path": "/ai-connections",
+            "query": {}
+          },
+          "response": {
+            "body": {
+              "data": [
+                {
+                  "client_name": "client_name-1",
+                  "created_at": "2026-09-21T12:00:00Z",
+                  "id": "00000000-0000-4000-8000-000000000001",
+                  "last_used_at": "2026-09-21T12:00:00Z",
+                  "project_ids": [
+                    "00000000-0000-4000-8000-000000000001"
+                  ],
+                  "scopes": [
+                    "scope-1"
+                  ],
+                  "user_email": "user_email-1",
+                  "user_id": "00000000-0000-4000-8000-000000000001",
+                  "user_name": "user_name-1",
+                  "user_role": "admin"
+                }
+              ]
+            },
+            "headers": {},
+            "status": 200
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": {
+          "data": [
+            {
+              "client_name": "client_name-1",
+              "created_at": "2026-09-21T12:00:00Z",
+              "id": "00000000-0000-4000-8000-000000000001",
+              "last_used_at": "2026-09-21T12:00:00Z",
+              "project_ids": [
+                "00000000-0000-4000-8000-000000000001"
+              ],
+              "scopes": [
+                "scope-1"
+              ],
+              "user_email": "user_email-1",
+              "user_id": "00000000-0000-4000-8000-000000000001",
+              "user_name": "user_name-1",
+              "user_role": "admin"
+            }
+          ]
+        }
+      },
+      "id": "listAIConnections/basic",
+      "multipart": false,
+      "op": "listAIConnections"
+    },
+    {
+      "args": {
+        "body": null,
+        "path": {
+          "id": "00000000-0000-4000-8000-000000000001"
+        },
+        "query": {}
+      },
+      "exchanges": [
+        {
+          "request": {
+            "body": null,
+            "method": "DELETE",
+            "path": "/ai-connections/00000000-0000-4000-8000-000000000001",
+            "query": {}
+          },
+          "response": {
+            "body": null,
+            "headers": {},
+            "status": 204
+          },
+          "retry": false
+        }
+      ],
+      "expect": {
+        "result": null
+      },
+      "id": "revokeAIConnection/basic",
+      "multipart": false,
+      "op": "revokeAIConnection"
     },
     {
       "args": {
@@ -14944,6 +15107,7 @@
     "getGroup",
     "getHealth",
     "getInstance",
+    "getInstanceUptime",
     "getMe",
     "getMyEntitlements",
     "getMySubscription",
@@ -14970,6 +15134,7 @@
     "inviteUser",
     "joinGroup",
     "leaveGroup",
+    "listAIConnections",
     "listAdvisories",
     "listAvailableOfficialNumbers",
     "listCampaignRecipients",
@@ -15018,6 +15183,7 @@
     "reregisterOfficialNumberProfile",
     "reregisterOfficialProfile",
     "resumeCampaign",
+    "revokeAIConnection",
     "revokeConnectedApp",
     "revokeMessage",
     "revokeMyKey",

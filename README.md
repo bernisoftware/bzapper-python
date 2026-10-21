@@ -7,7 +7,7 @@ Zero runtime dependencies (pure standard library). Python 3.9+.
 ## Install
 
 ```bash
-pip install bzapper==0.15.2
+pip install bzapper==0.16.0
 ```
 
 **Pin the exact version** (`bzapper==X.Y.Z` in `requirements.txt` / `pyproject.toml`).
@@ -157,6 +157,7 @@ your flows so the numbered menu alone is enough.
 client.list_instances()
 inst = client.create_instance("+5511999999999", nickname="Support", proxy_url=None)
 client.get_instance(inst["id"])
+client.get_instance_uptime(inst["id"])  # -> {"windows": {"24h", "7d", "30d"}, "events": [...], ...}
 
 # Connect via QR (default) or pairing code
 res = client.connect_instance(inst["id"], method="qr")    # -> {"status", "qr_code"?}
@@ -676,6 +677,16 @@ account's WhatsApp:
 ```python
 client.list_connected_apps()            # -> {"data": [{"id", "partner_name", "status", ...}]}
 client.revoke_connected_app("conn_id")  # admin; the partner's key stops working immediately
+```
+
+### AI connector (MCP)
+
+AI apps (e.g. Claude) a person authorized to operate the account through the
+MCP connector:
+
+```python
+client.list_ai_connections()           # -> {"data": [{"id", "client_name", "user_email", "scopes", ...}]}
+client.revoke_ai_connection("conn_id")  # its tokens stop working on the next call
 ```
 
 ## Errors, retries and idempotency

@@ -224,6 +224,7 @@ OPS: Dict[str, Call] = {
     "listInstances": client("list_instances"),
     "createInstance": client("create_instance"),
     "getInstance": client("get_instance"),
+    "getInstanceUptime": client("get_instance_uptime"),
     "deleteInstance": client("delete_instance"),
     "connectInstance": client("connect_instance"),
     "disconnectInstance": client("disconnect_instance"),
@@ -322,6 +323,9 @@ OPS: Dict[str, Call] = {
     # Dois parâmetros de caminho: a ordem do caso é alfabética, não a da rota.
     "redeliverWebhookDelivery": client_path("redeliver_webhook_delivery", "id", "delivery_id"),
     "triggerWebhookEvent": client("trigger_webhook_event"),
+    # AI connector (MCP)
+    "listAIConnections": client("list_ai_connections"),
+    "revokeAIConnection": client("revoke_ai_connection"),
     # bZapper Connect — customer side
     "listConnectedApps": client("list_connected_apps"),
     "revokeConnectedApp": client("revoke_connected_app"),
